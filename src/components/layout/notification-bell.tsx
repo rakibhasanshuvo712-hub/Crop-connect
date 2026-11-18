@@ -106,82 +106,92 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-2xl bg-white shadow-2xl border border-slate-200 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-          <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-bold text-slate-900">Notifications (নোটিফিকেশন)</span>
-              {unreadCount > 0 && (
-                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-800">
-                  {unreadCount} new
-                </span>
-              )}
-            </div>
+        <>
+          {/* Backdrop for closing on click outside */}
+          <div
+            className="fixed inset-0 z-40 bg-black/25 sm:bg-transparent"
+            onClick={() => setOpen(false)}
+          />
 
-            <div className="flex items-center gap-2">
-              {unreadCount > 0 && (
-                <button
-                  onClick={markAllRead}
-                  className="text-[11px] font-semibold text-emerald-700 hover:underline cursor-pointer"
-                >
-                  Mark all read
-                </button>
-              )}
-              <button
-                onClick={() => setOpen(false)}
-                className="p-1 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
-
-          <div className="max-h-[380px] overflow-y-auto divide-y divide-slate-100">
-            {notifications.length === 0 ? (
-              <div className="p-8 text-center text-xs text-slate-400">
-                No notifications at this time.
+          {/* Responsive Notification Panel: full width bounded on mobile, anchored on desktop */}
+          <div className="fixed left-2 right-2 top-16 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 w-auto sm:w-96 max-w-md sm:max-w-none mx-auto sm:mx-0 rounded-2xl bg-white shadow-2xl border border-slate-200 z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between p-3.5 sm:p-4 border-b border-slate-100 bg-slate-50">
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <span className="text-xs sm:text-sm font-bold text-slate-900">Notifications (নোটিফিকেশন)</span>
+                {unreadCount > 0 && (
+                  <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-emerald-100 text-emerald-800">
+                    {unreadCount} new
+                  </span>
+                )}
               </div>
-            ) : (
-              notifications.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => markItemRead(item.id)}
-                  className={`p-3.5 hover:bg-slate-50 transition-colors flex items-start gap-3 cursor-pointer ${
-                    !item.read ? 'bg-emerald-50/40' : ''
-                  }`}
-                >
-                  <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-xs shrink-0 mt-0.5">
-                    {getIcon(item.type)}
-                  </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-1">
-                      <p className={`text-xs font-bold truncate ${!item.read ? 'text-slate-900' : 'text-slate-600'}`}>
-                        {item.titleBn}
-                      </p>
-                      <span className="text-[10px] text-slate-400 shrink-0">{item.time}</span>
+              <div className="flex items-center gap-2">
+                {unreadCount > 0 && (
+                  <button
+                    onClick={markAllRead}
+                    className="text-[11px] font-semibold text-emerald-700 hover:underline cursor-pointer"
+                  >
+                    Mark all read
+                  </button>
+                )}
+                <button
+                  onClick={() => setOpen(false)}
+                  className="p-1 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  aria-label="Close notifications"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <div className="max-h-[calc(100vh-140px)] sm:max-h-[380px] overflow-y-auto divide-y divide-slate-100">
+              {notifications.length === 0 ? (
+                <div className="p-8 text-center text-xs text-slate-400">
+                  No notifications at this time.
+                </div>
+              ) : (
+                notifications.map((item) => (
+                  <div
+                    key={item.id}
+                    onClick={() => markItemRead(item.id)}
+                    className={`p-3 sm:p-3.5 hover:bg-slate-50 transition-colors flex items-start gap-3 cursor-pointer ${
+                      !item.read ? 'bg-emerald-50/40' : ''
+                    }`}
+                  >
+                    <div className="p-2 rounded-xl bg-white border border-slate-200 shadow-xs shrink-0 mt-0.5">
+                      {getIcon(item.type)}
                     </div>
-                    <p className="text-[11px] text-slate-500 line-clamp-2 mt-0.5">
-                      {item.messageBn}
-                    </p>
-                    {item.link && (
-                      <Link
-                        href={item.link}
-                        onClick={() => setOpen(false)}
-                        className="inline-block text-[10px] font-bold text-emerald-700 hover:underline mt-1"
-                      >
-                        বিস্তারিত দেখুন →
-                      </Link>
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-1">
+                        <p className={`text-xs font-bold truncate ${!item.read ? 'text-slate-900' : 'text-slate-600'}`}>
+                          {item.titleBn}
+                        </p>
+                        <span className="text-[10px] text-slate-400 shrink-0">{item.time}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 line-clamp-2 mt-0.5 leading-relaxed">
+                        {item.messageBn}
+                      </p>
+                      {item.link && (
+                        <Link
+                          href={item.link}
+                          onClick={() => setOpen(false)}
+                          className="inline-block text-[10px] font-bold text-emerald-700 hover:underline mt-1"
+                        >
+                          বিস্তারিত দেখুন →
+                        </Link>
+                      )}
+                    </div>
+
+                    {!item.read && (
+                      <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0 mt-2" />
                     )}
                   </div>
-
-                  {!item.read && (
-                    <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0 mt-2" />
-                  )}
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   )
