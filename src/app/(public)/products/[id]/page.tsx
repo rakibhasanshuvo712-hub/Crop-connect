@@ -33,6 +33,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
   if (!product) {
     notFound()
+    return null
   }
 
   const categoryInfo = PRODUCT_CATEGORIES.find(c => c.id === product.category)

@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { Heart, Store, ArrowRight } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { INITIAL_PRODUCTS } from '@/lib/actions/products'
+import { INITIAL_PRODUCTS } from '@/lib/seed-data'
 import { ProductCard } from '@/components/marketplace/product-card'
 
 export default function BuyerFavoritesPage() {

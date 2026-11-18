@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { ProductCategory, PRODUCT_CATEGORIES, DIVISIONS, Division } from '@/lib/constants'
 import { getSmartMatches } from '@/lib/actions/ai'
-import { INITIAL_PRODUCTS } from '@/lib/actions/products'
+import { INITIAL_PRODUCTS } from '@/lib/seed-data'
 import Link from 'next/link'
 
 export function SmartMatchModal() {
