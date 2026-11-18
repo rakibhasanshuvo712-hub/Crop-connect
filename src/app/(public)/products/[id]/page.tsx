@@ -344,28 +344,29 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               const cleanDigits = rawPhone.replace(/\D/g, '')
               const waDigits = cleanDigits.startsWith('88') ? cleanDigits : (cleanDigits.startsWith('0') ? '88' + cleanDigits : '880' + cleanDigits)
               return (
-                <div className="pt-2 grid grid-cols-2 gap-2">
+                <div className="pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <a
                     href={`tel:${rawPhone}`}
-                    className="flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-xs text-center"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-xs text-center"
                   >
                     <PhoneCall className="w-3.5 h-3.5 shrink-0" />
-                    <span>কল করুন ({rawPhone})</span>
+                    <span>কল করুন</span>
+                    <span className="font-mono text-[11px] opacity-90">({rawPhone})</span>
                   </a>
                   <a
                     href={`https://wa.me/${waDigits}?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি কৃষিবাজার থেকে আপনার '${product.name}' ফসলটি সম্পর্কে জানতে যোগাযোগ করছি।`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs transition-colors shadow-xs text-center"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs transition-colors shadow-xs text-center"
                   >
                     <MessageCircle className="w-3.5 h-3.5 shrink-0" />
-                    <span>WhatsApp চ্যাট</span>
+                    <span>WhatsApp চ্যাট করুন</span>
                   </a>
                 </div>
               )
             })()}
 
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+            <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
               <Link
                 href={`/farmers/${product.farmer_id || product.farmer?.id || 'farmer-1'}`}
                 className="text-xs font-bold text-emerald-700 hover:underline"

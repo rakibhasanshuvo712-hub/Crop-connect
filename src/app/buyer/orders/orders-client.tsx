@@ -109,7 +109,7 @@ export function BuyerOrdersClient({ initialOrders }: BuyerOrdersClientProps) {
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
                 <Link
                   href={`/buyer/orders/${o.id}`}
                   className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:underline"

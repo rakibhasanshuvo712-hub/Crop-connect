@@ -26,7 +26,7 @@ export function AdminSidebar() {
   ]
 
   return (
-    <aside className="w-64 bg-slate-950 text-slate-300 min-h-screen flex flex-col justify-between p-4 border-r border-slate-800">
+    <aside className="hidden md:flex w-64 bg-slate-950 text-slate-300 min-h-screen flex-col justify-between p-4 border-r border-slate-800 shrink-0">
       <div className="space-y-6">
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2.5 px-3 py-2">

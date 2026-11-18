@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
-import { Filter, X, Search, RotateCcw } from 'lucide-react'
+import { Filter, X, Search, RotateCcw, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { PRODUCT_CATEGORIES, DIVISIONS, DISTRICTS, Division } from '@/lib/constants'
@@ -24,6 +24,7 @@ export function MarketplaceFilters() {
   const [district, setDistrict] = useState(currentDistrict)
   const [minPrice, setMinPrice] = useState(currentMinPrice)
   const [maxPrice, setMaxPrice] = useState(currentMaxPrice)
+  const [mobileExpanded, setMobileExpanded] = useState(false)
 
   const handleApply = (newParams?: Record<string, string>) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -72,20 +73,36 @@ export function MarketplaceFilters() {
   const availableDistricts = division !== 'all' ? DISTRICTS[division as Division] || [] : []
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200/90 p-5 space-y-6 shadow-xs">
+    <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs">
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div className="flex items-center gap-2">
-          <Filter className="h-4 w-4 text-emerald-600" />
-          <h3 className="font-bold text-slate-900 text-sm">Filters & Sorting</h3>
-        </div>
+        <button
+          type="button"
+          onClick={() => setMobileExpanded(!mobileExpanded)}
+          className="flex items-center gap-2 text-left cursor-pointer lg:cursor-default w-full justify-between lg:justify-start"
+        >
+          <div className="flex items-center gap-2">
+            <Filter className="h-4 w-4 text-emerald-600" />
+            <h3 className="font-bold text-slate-900 text-sm">Filters & Sorting (ফিল্টার)</h3>
+            {(currentCategory !== 'all' || currentDivision !== 'all' || currentSearch || currentMinPrice || currentMaxPrice) && (
+              <span className="w-2 h-2 rounded-full bg-emerald-600 inline-block" />
+            )}
+          </div>
+          <div className="flex items-center gap-1 text-xs text-slate-500 font-semibold lg:hidden">
+            <span>{mobileExpanded ? 'Hide' : 'Show'}</span>
+            <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${mobileExpanded ? 'rotate-180' : ''}`} />
+          </div>
+        </button>
+
         <button
           onClick={handleReset}
-          className="text-xs text-slate-500 hover:text-emerald-700 flex items-center gap-1 cursor-pointer"
+          className="hidden lg:flex text-xs text-slate-500 hover:text-emerald-700 items-center gap-1 cursor-pointer shrink-0"
         >
           <RotateCcw className="h-3 w-3" />
           <span>Reset</span>
         </button>
       </div>
+
+      <div className={`${mobileExpanded ? 'block' : 'hidden lg:block'} space-y-6 pt-4`}>
 
       {/* Search Input */}
       <div className="space-y-1.5">
@@ -207,14 +224,25 @@ export function MarketplaceFilters() {
         </select>
       </div>
 
-      <Button
-        variant="default"
-        size="sm"
-        onClick={() => handleApply()}
-        className="w-full"
-      >
-        Apply Filters
-      </Button>
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleReset}
+          className="lg:hidden w-1/3 text-xs"
+        >
+          Reset
+        </Button>
+        <Button
+          variant="default"
+          size="sm"
+          onClick={() => { handleApply(); setMobileExpanded(false); }}
+          className="w-full flex-1"
+        >
+          Apply Filters (ফিল্টার প্রয়োগ)
+        </Button>
+      </div>
+      </div>
     </div>
   )
 }

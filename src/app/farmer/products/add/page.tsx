@@ -247,11 +247,11 @@ export default function AddProductPage() {
           </div>
         </div>
 
-        <div className="pt-2 flex justify-end gap-3">
-          <Button type="button" variant="outline" asChild>
+        <div className="pt-2 flex flex-col-reverse sm:flex-row justify-end gap-3">
+          <Button type="button" variant="outline" asChild className="w-full sm:w-auto">
             <Link href="/farmer/products">Cancel</Link>
           </Button>
-          <Button type="submit" variant="default" disabled={loading} className="font-bold px-8">
+          <Button type="submit" variant="default" disabled={loading} className="font-bold px-8 w-full sm:w-auto">
             {loading ? 'Publishing Crop...' : 'Publish Listing (পণ্য প্রকাশ করুন)'}
           </Button>
         </div>

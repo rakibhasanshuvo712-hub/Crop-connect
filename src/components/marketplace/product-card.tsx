@@ -58,15 +58,15 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
 
         {/* Content Details */}
-        <div className="p-5 space-y-3">
+        <div className="p-4 sm:p-5 space-y-3">
           {/* Specific Area & Harvest Date */}
-          <div className="flex items-center justify-between text-xs text-slate-500">
-            <div className="flex items-center gap-1 font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80">
+          <div className="flex flex-wrap items-center justify-between gap-1.5 text-xs text-slate-500">
+            <div className="flex items-center gap-1 font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80 truncate max-w-full">
               <MapPin className="h-3 w-3 text-rose-500 shrink-0" />
-              <span>{product.upazila ? `${product.upazila}, ` : ''}{product.district || 'Dinajpur'}, {product.division || 'Rangpur'}</span>
+              <span className="truncate">{product.upazila ? `${product.upazila}, ` : ''}{product.district || 'Dinajpur'}, {product.division || 'Rangpur'}</span>
             </div>
             {product.harvest_date && (
-              <span className="text-[11px] text-slate-400 font-medium">
+              <span className="text-[11px] text-slate-400 font-medium whitespace-nowrap">
                 Harvest: {formatDate(product.harvest_date)}
               </span>
             )}
@@ -85,15 +85,15 @@ export function ProductCard({ product }: ProductCardProps) {
           </p>
 
           {/* Farmer contact & phone */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-100">
-            <div className="flex items-center gap-2 truncate">
+          <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-100 min-w-0">
+            <div className="flex items-center gap-2 min-w-0 flex-1 truncate">
               <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800 text-[10px] font-bold shrink-0">
                 {product.farmer?.full_name?.charAt(0) || 'F'}
               </div>
-              <div className="text-xs truncate">
+              <div className="text-xs truncate min-w-0 flex-1">
                 <Link
                   href={`/farmers/${product.farmer_id || product.farmer?.id || 'farmer-1'}`}
-                  className="font-semibold text-slate-800 hover:text-emerald-700 hover:underline"
+                  className="font-semibold text-slate-800 hover:text-emerald-700 hover:underline truncate block"
                 >
                   {product.farmer_profile?.farm_name || product.farmer?.full_name || 'Verified Farmer'}
                 </Link>
@@ -103,10 +103,10 @@ export function ProductCard({ product }: ProductCardProps) {
             {/* Farmer Phone Number */}
             <a
               href={`tel:${product.farmer?.phone || '+880 1711-223344'}`}
-              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100/70 hover:bg-emerald-200/80 px-2.5 py-1 rounded-lg transition-colors self-start sm:self-auto shrink-0"
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100/70 hover:bg-emerald-200/80 px-2 py-1 rounded-lg transition-colors shrink-0 whitespace-nowrap"
               title="Call Farmer"
             >
-              <Phone className="h-3 w-3 text-emerald-700" />
+              <Phone className="h-3 w-3 text-emerald-700 shrink-0" />
               <span>{product.farmer?.phone || '+880 1711-223344'}</span>
             </a>
           </div>

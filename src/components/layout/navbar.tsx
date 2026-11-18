@@ -129,7 +129,7 @@ export function Navbar() {
             </button>
 
             {user ? (
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <Button variant="default" size="sm" asChild>
                   <Link href={dashboardHref} className="flex items-center gap-1.5">
                     <User className="h-4 w-4" />
@@ -147,7 +147,7 @@ export function Navbar() {
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div className="hidden sm:flex items-center gap-2">
                 <Button variant="ghost" size="sm" asChild>
                   <Link href="/auth/login" className="flex items-center gap-1.5 text-slate-700">
                     <LogIn className="h-4 w-4 text-slate-500" />

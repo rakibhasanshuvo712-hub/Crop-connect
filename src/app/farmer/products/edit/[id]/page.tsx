@@ -287,11 +287,12 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         </div>
 
         {/* Submit Button */}
-        <div className="flex items-center justify-end gap-3 pt-4">
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-4">
           <Button
             type="button"
             variant="ghost"
             onClick={() => router.back()}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
@@ -299,7 +300,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
           <Button
             type="submit"
             disabled={loading}
-            className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-8"
+            className="bg-emerald-700 hover:bg-emerald-800 text-white font-bold px-8 w-full sm:w-auto"
           >
             <Save className="h-4 w-4 mr-1.5" />
             {loading ? 'Saving Changes...' : 'Save & Update Listing'}

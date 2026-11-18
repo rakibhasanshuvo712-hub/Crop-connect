@@ -48,7 +48,8 @@ export function AIAssistantWidget() {
       {/* Floating trigger button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all cursor-pointer border border-emerald-400/30"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center gap-2 p-3 sm:px-4 sm:py-3 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-700 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all cursor-pointer border border-emerald-400/30"
+        title="Open AI Assistant"
       >
         <div className="relative">
           <Bot className="h-5 w-5" />
@@ -57,13 +58,13 @@ export function AIAssistantWidget() {
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400"></span>
           </span>
         </div>
-        <span className="text-sm font-bold">কৃষি AI সহকারী</span>
+        <span className="text-xs sm:text-sm font-bold hidden sm:inline">কৃষি AI সহকারী</span>
       </button>
 
       {/* Slide-in Chat Drawer / Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-end sm:justify-end sm:p-6 bg-slate-900/40 backdrop-blur-xs">
-          <div className="bg-white w-full sm:w-96 sm:rounded-2xl shadow-2xl border border-slate-200 flex flex-col h-[85vh] sm:h-[600px] overflow-hidden">
+          <div className="bg-white w-full sm:w-96 rounded-t-3xl sm:rounded-2xl shadow-2xl border border-slate-200 flex flex-col h-[90vh] sm:h-[600px] overflow-hidden">
             {/* Header */}
             <div className="p-4 bg-gradient-to-r from-emerald-700 to-emerald-600 text-white flex items-center justify-between">
               <div className="flex items-center gap-2.5">

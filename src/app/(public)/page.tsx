@@ -90,40 +90,40 @@ export default async function HomePage() {
               বাংলাদেশি কৃষকদের সাথে পাইকারি ও খুচরা ক্রেতাদের সরাসরি সংযোগ। মধ্যস্বত্বভোগীদের দৌরাত্ম্য দূর করে কৃষকের ন্যায্যমূল্য ও ক্রেতার সাশ্রয়ী কেনাকাটা নিশ্চিত করি।
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <Button variant="default" size="default" asChild className="shadow-md shadow-emerald-700/20 font-bold">
-                <Link href="/auth/register?role=farmer" className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2 w-full max-w-xl mx-auto sm:max-w-none">
+              <Button variant="default" size="default" asChild className="shadow-md shadow-emerald-700/20 font-bold w-full sm:w-auto justify-center">
+                <Link href="/auth/register?role=farmer" className="flex items-center justify-center gap-2">
                   <Sprout className="h-4 w-4" />
                   <span>Join as Farmer (কৃষক হিসেবে যুক্ত হোন)</span>
                 </Link>
               </Button>
 
-              <Button variant="outline" size="default" asChild className="font-bold border-slate-300">
-                <Link href="/auth/register?role=buyer" className="flex items-center gap-2">
+              <Button variant="outline" size="default" asChild className="font-bold border-slate-300 w-full sm:w-auto justify-center">
+                <Link href="/auth/register?role=buyer" className="flex items-center justify-center gap-2">
                   <ShoppingBag className="h-4 w-4 text-emerald-600" />
                   <span>Join as Buyer (ক্রেতা হিসেবে যুক্ত হোন)</span>
                 </Link>
               </Button>
 
-              <div>
+              <div className="w-full sm:w-auto flex justify-center">
                 <SmartMatchModal />
               </div>
             </div>
 
             {/* Platform highlights strip */}
-            <div className="pt-4 flex flex-wrap items-center justify-center gap-4 text-xs font-semibold text-slate-500">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+            <div className="pt-4 flex flex-wrap items-center justify-center gap-2.5 sm:gap-4 text-xs font-semibold text-slate-500">
+              <span className="flex items-center gap-1.5 bg-slate-50 sm:bg-transparent px-2.5 py-1 sm:p-0 rounded-lg border sm:border-0 border-slate-200">
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
                 Direct Farmer Phone Contact
               </span>
-              <span>•</span>
-              <span className="flex items-center gap-1.5">
-                <MapPin className="h-4 w-4 text-rose-500" />
+              <span className="hidden sm:inline">•</span>
+              <span className="flex items-center gap-1.5 bg-slate-50 sm:bg-transparent px-2.5 py-1 sm:p-0 rounded-lg border sm:border-0 border-slate-200">
+                <MapPin className="h-4 w-4 text-rose-500 shrink-0" />
                 Specific Upazila & District Areas
               </span>
-              <span>•</span>
-              <span className="flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-blue-600" />
+              <span className="hidden sm:inline">•</span>
+              <span className="flex items-center gap-1.5 bg-slate-50 sm:bg-transparent px-2.5 py-1 sm:p-0 rounded-lg border sm:border-0 border-slate-200">
+                <ShieldCheck className="h-4 w-4 text-blue-600 shrink-0" />
                 Admin Dispute Resolution Protection
               </span>
             </div>

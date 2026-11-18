@@ -84,7 +84,7 @@ export default function AdminReportsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl">
+        <div className="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl overflow-x-auto max-w-full">
           {(['all', 'pending', 'resolved', 'dismissed'] as const).map((s) => (
             <button
               key={s}
@@ -115,7 +115,7 @@ export default function AdminReportsPage() {
             return (
               <div
                 key={rep.id}
-                className={`rounded-3xl bg-white border p-6 shadow-xs flex flex-col gap-4 transition-all ${
+                className={`rounded-3xl bg-white border p-4 sm:p-6 shadow-xs flex flex-col gap-4 transition-all ${
                   rep.status === 'pending' ? 'border-rose-200 bg-rose-50/10' : 'border-slate-200'
                 }`}
               >
@@ -228,8 +228,8 @@ export default function AdminReportsPage() {
                 )}
 
                 {/* Action Buttons: Solve Dispute, Ban, Delete */}
-                <div className="pt-2 flex flex-wrap items-center justify-between gap-3">
-                  <div className="flex items-center gap-2">
+                <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
                     {/* Ban Reported Party Button */}
                     <Button
                       size="sm"
@@ -254,7 +254,7 @@ export default function AdminReportsPage() {
                     </Button>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     {rep.status === 'pending' ? (
                       <>
                         <Button
