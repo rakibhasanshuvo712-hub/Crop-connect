@@ -113,6 +113,45 @@ function LoginForm() {
             </Button>
           </form>
 
+          {/* Quick Demo & Admin Access Buttons */}
+          <div className="pt-2 border-t border-slate-100 space-y-2">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block text-center">
+              Quick One-Click Demo Access
+            </span>
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('admin@krishibazar.com')
+                  setPassword('AdminPassword2026!')
+                }}
+                className="py-1.5 px-2 rounded-xl border border-slate-200 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50 text-[11px] font-bold text-slate-700 hover:text-emerald-800 transition-colors cursor-pointer text-center"
+              >
+                🛠️ Admin
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('farmer@krishibazar.com')
+                  setPassword('FarmerPassword2026!')
+                }}
+                className="py-1.5 px-2 rounded-xl border border-slate-200 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50 text-[11px] font-bold text-slate-700 hover:text-emerald-800 transition-colors cursor-pointer text-center"
+              >
+                🌾 Farmer
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail('buyer@krishibazar.com')
+                  setPassword('BuyerPassword2026!')
+                }}
+                className="py-1.5 px-2 rounded-xl border border-slate-200 hover:border-emerald-500 bg-slate-50 hover:bg-emerald-50 text-[11px] font-bold text-slate-700 hover:text-emerald-800 transition-colors cursor-pointer text-center"
+              >
+                🛒 Buyer
+              </button>
+            </div>
+          </div>
+
           <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
             <span>Don't have an account? </span>
             <Link href="/auth/register" className="font-bold text-emerald-700 hover:underline">

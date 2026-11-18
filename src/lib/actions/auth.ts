@@ -106,11 +106,14 @@ export async function signInUser(formData: { email: string; password: string }) 
   const cookieStore = await cookies()
 
   // 1. Preconfigured Demo & Administrative Accounts
-  if (normEmail === 'admin@cropconnect.com' && (pass === 'AdminPassword2026!' || pass === 'admin123' || pass === 'Admin@123')) {
+  if (
+    (normEmail === 'admin@krishibazar.com' || normEmail === 'admin@krishibazar.bd' || normEmail === 'admin@cropconnect.com') &&
+    (pass === 'AdminPassword2026!' || pass === 'admin123' || pass === 'Admin@123' || pass === 'admin')
+  ) {
     cookieStore.set('cropconnect_user', JSON.stringify({
       id: 'admin-1',
-      email: 'admin@cropconnect.com',
-      full_name: 'System Administrator',
+      email: normEmail,
+      full_name: 'System Administrator (অ্যাডমিন)',
       role: 'admin',
     }), { path: '/', maxAge: 60 * 60 * 24 * 7 })
 
@@ -118,10 +121,13 @@ export async function signInUser(formData: { email: string; password: string }) 
     return { success: true, role: 'admin' as UserRole }
   }
 
-  if (normEmail === 'farmer@cropconnect.com' && (pass === 'FarmerPassword2026!' || pass === 'farmer123')) {
+  if (
+    (normEmail === 'farmer@krishibazar.com' || normEmail === 'farmer@cropconnect.com') &&
+    (pass === 'FarmerPassword2026!' || pass === 'farmer123' || pass === 'farmer')
+  ) {
     cookieStore.set('cropconnect_user', JSON.stringify({
       id: 'farmer-1',
-      email: 'farmer@cropconnect.com',
+      email: normEmail,
       full_name: 'Al-Amin Hossain',
       role: 'farmer',
       farm_name: 'Golden Harvest Agro Farm'
@@ -131,10 +137,13 @@ export async function signInUser(formData: { email: string; password: string }) 
     return { success: true, role: 'farmer' as UserRole }
   }
 
-  if (normEmail === 'buyer@cropconnect.com' && (pass === 'BuyerPassword2026!' || pass === 'buyer123')) {
+  if (
+    (normEmail === 'buyer@krishibazar.com' || normEmail === 'buyer@cropconnect.com') &&
+    (pass === 'BuyerPassword2026!' || pass === 'buyer123' || pass === 'buyer')
+  ) {
     cookieStore.set('cropconnect_user', JSON.stringify({
       id: 'buyer-1',
-      email: 'buyer@cropconnect.com',
+      email: normEmail,
       full_name: 'Shwapno Procurement Hub',
       role: 'buyer',
     }), { path: '/', maxAge: 60 * 60 * 24 * 7 })
