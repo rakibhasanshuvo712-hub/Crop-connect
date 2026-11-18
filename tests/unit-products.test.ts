@@ -122,5 +122,86 @@ export async function runProductTests(): Promise<{ name: string; passed: boolean
     results.push({ name: 'Product Details: Non-existent ID returns null gracefully', passed: false, error: err.message })
   }
 
+  // Test 11: Product Expiry Filtering
+  try {
+    // Add a mock expired product to INITIAL_PRODUCTS
+    const expiredProdId = 'test-expired-prod-qa'
+    INITIAL_PRODUCTS.push({
+      id: expiredProdId,
+      farmer_id: 'farmer-1',
+      name: 'Expired Paddy Crop',
+      category: 'rice',
+      description: 'Expired crop test',
+      quantity: 100,
+      unit: 'kg',
+      price_per_unit: 40,
+      harvest_date: '2020-01-01',
+      availability_date: '2020-01-10',
+      expiry_date: '2020-01-15', // Past date!
+      division: 'Dhaka',
+      district: 'Dhaka',
+      upazila: 'Dhamrai',
+      status: 'active',
+      is_featured: false,
+      view_count: 5,
+      created_at: new Date(2020, 0, 1).toISOString(),
+      updated_at: new Date(2020, 0, 1).toISOString()
+    })
+
+    const catalog = await getProducts()
+    const foundExpired = catalog.products.some(p => p.id === expiredProdId)
+
+    // Clean up
+    const idx = INITIAL_PRODUCTS.findIndex(p => p.id === expiredProdId)
+    if (idx !== -1) INITIAL_PRODUCTS.splice(idx, 1)
+
+    if (foundExpired) {
+      throw new Error('Expired product was incorrectly included in active marketplace catalog!')
+    }
+    results.push({ name: 'Product Expiry: Expired listing filtered out from public marketplace', passed: true })
+  } catch (err: any) {
+    results.push({ name: 'Product Expiry: Expired listing filtered out from public marketplace', passed: false, error: err.message })
+  }
+
+  // Test 12: Removed Status Filtering
+  try {
+    const removedProdId = 'test-removed-prod-qa'
+    INITIAL_PRODUCTS.push({
+      id: removedProdId,
+      farmer_id: 'farmer-1',
+      name: 'Removed Tomato Crop',
+      category: 'tomato',
+      description: 'Removed crop test',
+      quantity: 50,
+      unit: 'kg',
+      price_per_unit: 30,
+      harvest_date: '2026-11-01',
+      availability_date: '2026-11-20',
+      expiry_date: '2027-12-31',
+      division: 'Rajshahi',
+      district: 'Bogura',
+      upazila: 'Sadar',
+      status: 'removed', // Removed!
+      is_featured: false,
+      view_count: 2,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    })
+
+    const catalog = await getProducts()
+    const foundRemoved = catalog.products.some(p => p.id === removedProdId)
+
+    // Clean up
+    const idx = INITIAL_PRODUCTS.findIndex(p => p.id === removedProdId)
+    if (idx !== -1) INITIAL_PRODUCTS.splice(idx, 1)
+
+    if (foundRemoved) {
+      throw new Error('Removed product was incorrectly visible in active marketplace catalog!')
+    }
+    results.push({ name: 'Product Removal: Deleted/removed listing excluded from public marketplace', passed: true })
+  } catch (err: any) {
+    results.push({ name: 'Product Removal: Deleted/removed listing excluded from public marketplace', passed: false, error: err.message })
+  }
+
   return results
 }

@@ -7,7 +7,7 @@ import { ArrowLeft, Save, Sparkles, Upload, AlertCircle, CheckCircle2, Trash2 } 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { PRODUCT_CATEGORIES, ProductCategory, UNITS, UnitType, DIVISIONS, Division, DISTRICTS } from '@/lib/constants'
+import { PRODUCT_CATEGORIES, ProductCategory, UNITS, UnitType, DIVISIONS, Division, DISTRICTS, getUpazilasForDistrict } from '@/lib/constants'
 import { updateProduct, deleteProduct } from '@/lib/actions/products'
 import { INITIAL_PRODUCTS } from '@/lib/seed-data'
 import { AIDescriptionGenerator } from '@/components/ai/ai-description-generator'
@@ -31,9 +31,10 @@ export default function EditProductPage({ params }: EditProductPageProps) {
   const [pricePerUnit, setPricePerUnit] = useState(existingProduct.price_per_unit)
   const [harvestDate, setHarvestDate] = useState(existingProduct.harvest_date || '')
   const [availabilityDate, setAvailabilityDate] = useState(existingProduct.availability_date || '')
+  const [expiryDate, setExpiryDate] = useState(existingProduct.expiry_date || '')
   const [division, setDivision] = useState<Division>((existingProduct.division as Division) || 'Rangpur')
   const [district, setDistrict] = useState(existingProduct.district || 'Dinajpur')
-  const [upazila, setUpazila] = useState(existingProduct.upazila || '')
+  const [upazila, setUpazila] = useState(existingProduct.upazila || (getUpazilasForDistrict(existingProduct.district || 'Dinajpur')[0] || ''))
   const [imageUrl, setImageUrl] = useState(existingProduct.images?.[0]?.url || '')
   const [loading, setLoading] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -52,6 +53,7 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         price_per_unit: Number(pricePerUnit),
         harvest_date: harvestDate || undefined,
         availability_date: availabilityDate || undefined,
+        expiry_date: expiryDate || undefined,
         division,
         district,
         upazila: upazila || undefined,
@@ -221,10 +223,10 @@ export default function EditProductPage({ params }: EditProductPageProps) {
         {/* Harvest Date & Location */}
         <div className="rounded-3xl bg-white border border-slate-200 p-6 space-y-4 shadow-xs">
           <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">
-            3. Harvest Date & Location (সংগ্রহের তারিখ ও অবস্থান)
+            3. Harvest Date, Expiry & Location (তারিখ, মেয়াদ ও অবস্থান)
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
             <div>
               <label className="font-bold text-slate-700 block mb-1">Harvest Date (ফসল তোলার তারিখ)</label>
               <Input
@@ -242,6 +244,20 @@ export default function EditProductPage({ params }: EditProductPageProps) {
                 onChange={(e) => setAvailabilityDate(e.target.value)}
               />
             </div>
+
+            <div>
+              <label className="font-bold text-slate-700 block mb-1">
+                Listing Expiry Date (মেয়াদ উত্তীর্ণের তারিখ)
+              </label>
+              <Input
+                type="date"
+                value={expiryDate}
+                onChange={(e) => setExpiryDate(e.target.value)}
+              />
+              <span className="text-[10px] text-slate-400 block mt-0.5">
+                মেয়াদ শেষ হলে স্বয়ংক্রিয়ভাবে মার্কেটপ্লেস থেকে লুকানো হবে
+              </span>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs pt-2">
@@ -252,7 +268,11 @@ export default function EditProductPage({ params }: EditProductPageProps) {
                 onChange={(e) => {
                   const div = e.target.value as Division
                   setDivision(div)
-                  setDistrict(DISTRICTS[div]?.[0] || '')
+                  const dists = DISTRICTS[div] || []
+                  const firstDist = dists[0] || 'Dinajpur'
+                  setDistrict(firstDist)
+                  const upzs = getUpazilasForDistrict(firstDist)
+                  setUpazila(upzs[0] || '')
                 }}
                 className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
@@ -266,7 +286,12 @@ export default function EditProductPage({ params }: EditProductPageProps) {
               <label className="font-bold text-slate-700 block mb-1">District (জেলা)</label>
               <select
                 value={district}
-                onChange={(e) => setDistrict(e.target.value)}
+                onChange={(e) => {
+                  const dist = e.target.value
+                  setDistrict(dist)
+                  const upzs = getUpazilasForDistrict(dist)
+                  setUpazila(upzs[0] || '')
+                }}
                 className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
               >
                 {DISTRICTS[division]?.map((dist) => (
@@ -277,11 +302,15 @@ export default function EditProductPage({ params }: EditProductPageProps) {
 
             <div>
               <label className="font-bold text-slate-700 block mb-1">Upazila (উপজেলা)</label>
-              <Input
+              <select
                 value={upazila}
                 onChange={(e) => setUpazila(e.target.value)}
-                placeholder="e.g. Birganj"
-              />
+                className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              >
+                {getUpazilasForDistrict(district).map((u) => (
+                  <option key={u} value={u}>{u}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

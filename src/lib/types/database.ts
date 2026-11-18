@@ -56,10 +56,11 @@ export interface Product {
   price_per_unit: number
   harvest_date: string | null
   availability_date: string | null
+  expiry_date?: string | null
   division: Division | null
   district: string | null
   upazila: string | null
-  status: "active" | "inactive" | "sold_out"
+  status: "active" | "inactive" | "sold_out" | "removed"
   is_featured: boolean
   view_count: number
   ai_description?: string | null

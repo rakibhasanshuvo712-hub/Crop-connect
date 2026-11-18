@@ -6,7 +6,7 @@ import { Sprout, Check, RefreshCw, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ProductCategory, PRODUCT_CATEGORIES, UNITS, UnitType, DIVISIONS, DISTRICTS, Division } from '@/lib/constants'
+import { ProductCategory, PRODUCT_CATEGORIES, UNITS, UnitType, DIVISIONS, DISTRICTS, Division, getUpazilasForDistrict } from '@/lib/constants'
 import { createProduct } from '@/lib/actions/products'
 import { AICropClassifier } from '@/components/ai/ai-crop-classifier'
 import { AIDescriptionGenerator } from '@/components/ai/ai-description-generator'
@@ -21,6 +21,8 @@ export default function AddProductPage() {
   const [unit, setUnit] = useState<UnitType>('kg')
   const [pricePerUnit, setPricePerUnit] = useState<number>(68)
   const [harvestDate, setHarvestDate] = useState('2026-11-15')
+  const defaultExp = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0]
+  const [expiryDate, setExpiryDate] = useState(defaultExp)
   const [division, setDivision] = useState<Division>('Rangpur')
   const [district, setDistrict] = useState('Dinajpur')
   const [upazila, setUpazila] = useState('Birol')
@@ -47,6 +49,7 @@ export default function AddProductPage() {
         unit,
         price_per_unit: Number(pricePerUnit),
         harvest_date: harvestDate,
+        expiry_date: expiryDate,
         division,
         district,
         upazila,
@@ -112,7 +115,7 @@ export default function AddProductPage() {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-700">Category (ক্যাটাগরি)</label>
               <select
@@ -134,6 +137,22 @@ export default function AddProductPage() {
                 onChange={(e) => setHarvestDate(e.target.value)}
                 className="text-xs"
               />
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-700">
+                Listing Expiry Date (মেয়াদ উত্তীর্ণের তারিখ)
+              </label>
+              <Input
+                type="date"
+                value={expiryDate}
+                onChange={(e) => setExpiryDate(e.target.value)}
+                required
+                className="text-xs"
+              />
+              <span className="text-[10px] text-slate-400 block">
+                এই তারিখের পর স্বয়ংক্রিয়ভাবে বাজার থেকে সরানো হবে
+              </span>
             </div>
           </div>
         </div>
@@ -209,14 +228,22 @@ export default function AddProductPage() {
 
         {/* Step 5: Location Details */}
         <div className="bg-white rounded-3xl border border-slate-200/90 p-6 space-y-4 shadow-xs">
-          <h3 className="font-bold text-sm text-slate-900">Geographic Location (উৎপাদনস্থল)</h3>
+          <h3 className="font-bold text-sm text-slate-900">Geographic Location (উৎপাদনস্থল - সকল জেলা ও উপজেলা)</h3>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-700">Division (বিভাগ)</label>
               <select
                 value={division}
-                onChange={(e) => setDivision(e.target.value as Division)}
+                onChange={(e) => {
+                  const div = e.target.value as Division
+                  setDivision(div)
+                  const dists = DISTRICTS[div] || []
+                  const firstDist = dists[0] || 'Dinajpur'
+                  setDistrict(firstDist)
+                  const upzs = getUpazilasForDistrict(firstDist)
+                  setUpazila(upzs[0] || '')
+                }}
                 className="w-full text-xs h-10 rounded-xl border border-slate-200 bg-white px-3"
               >
                 {DIVISIONS.map(d => (
@@ -227,22 +254,33 @@ export default function AddProductPage() {
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-700">District (জেলা)</label>
-              <Input
+              <select
                 value={district}
-                onChange={(e) => setDistrict(e.target.value)}
-                required
-                className="text-xs"
-              />
+                onChange={(e) => {
+                  const dist = e.target.value
+                  setDistrict(dist)
+                  const upzs = getUpazilasForDistrict(dist)
+                  setUpazila(upzs[0] || '')
+                }}
+                className="w-full text-xs h-10 rounded-xl border border-slate-200 bg-white px-3"
+              >
+                {DISTRICTS[division]?.map(d => (
+                  <option key={d} value={d}>{d}</option>
+                ))}
+              </select>
             </div>
 
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-slate-700">Upazila (উপজেলা)</label>
-              <Input
+              <select
                 value={upazila}
                 onChange={(e) => setUpazila(e.target.value)}
-                required
-                className="text-xs"
-              />
+                className="w-full text-xs h-10 rounded-xl border border-slate-200 bg-white px-3"
+              >
+                {getUpazilasForDistrict(district).map(u => (
+                  <option key={u} value={u}>{u}</option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

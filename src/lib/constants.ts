@@ -75,6 +75,8 @@ export const ORDER_STATUS_DETAILS: Record<OrderStatus, { en: string; bn: string;
 export const USER_ROLES = ["farmer", "buyer", "admin"] as const
 export type UserRole = typeof USER_ROLES[number]
 
+export { UPAZILAS, ALL_DISTRICTS, getUpazilasForDistrict, getDistrictsForDivision } from "./geo"
+
 export const APP_CONFIG = {
   name: "কৃষিবাজার",
   nameBn: "কৃষিবাজার",

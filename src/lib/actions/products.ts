@@ -17,6 +17,7 @@ export interface CreateProductInput {
   price_per_unit: number
   harvest_date?: string
   availability_date?: string
+  expiry_date?: string
   division?: Division
   district?: string
   upazila?: string
@@ -34,6 +35,7 @@ export async function clearProductCache() {
 function filterAndSortProducts(products: Product[], filters?: {
   category?: string
   district?: string
+  upazila?: string
   division?: string
   search?: string
   minPrice?: number
@@ -42,7 +44,19 @@ function filterAndSortProducts(products: Product[], filters?: {
   limit?: number
   offset?: number
 }) {
-  let result = [...products]
+  const now = Date.now()
+  // Exclude removed, inactive, or expired products from public marketplace
+  let result = products.filter(p => {
+    if (p.status === 'removed' || p.status === 'inactive') return false
+    if (p.expiry_date) {
+      const expTime = new Date(p.expiry_date).getTime()
+      if (!isNaN(expTime) && expTime < now) {
+        return false // Product has expired
+      }
+    }
+    return true
+  })
+
   if (filters?.category && filters.category !== 'all') {
     result = result.filter(p => p.category === filters.category)
   }
@@ -51,6 +65,9 @@ function filterAndSortProducts(products: Product[], filters?: {
   }
   if (filters?.district && filters.district !== 'all') {
     result = result.filter(p => p.district === filters.district)
+  }
+  if (filters?.upazila && filters.upazila !== 'all') {
+    result = result.filter(p => p.upazila === filters.upazila)
   }
   if (filters?.search) {
     const s = filters.search.toLowerCase()
@@ -83,6 +100,7 @@ function filterAndSortProducts(products: Product[], filters?: {
 export async function getProducts(filters?: {
   category?: string
   district?: string
+  upazila?: string
   division?: string
   search?: string
   minPrice?: number
@@ -126,6 +144,9 @@ export async function getProducts(filters?: {
     if (filters?.district && filters.district !== 'all') {
       query = query.eq('district', filters.district)
     }
+    if (filters?.upazila && filters.upazila !== 'all') {
+      query = query.eq('upazila', filters.upazila)
+    }
     if (filters?.minPrice) {
       query = query.gte('price_per_unit', filters.minPrice)
     }
@@ -157,7 +178,17 @@ export async function getProducts(filters?: {
       return fallback
     }
 
-    const result = { products: res.data as Product[], count: res.count || res.data.length }
+    const now = Date.now()
+    const activeProducts = (res.data as Product[]).filter(p => {
+      if (p.status === 'removed' || p.status === 'inactive') return false
+      if (p.expiry_date) {
+        const expTime = new Date(p.expiry_date).getTime()
+        if (!isNaN(expTime) && expTime < now) return false
+      }
+      return true
+    })
+
+    const result = { products: activeProducts, count: res.count || activeProducts.length }
     productCache.set(cacheKey, { data: result, expiresAt: Date.now() + CACHE_TTL_MS })
     return result
   } catch {
@@ -239,6 +270,7 @@ export async function createProduct(input: CreateProductInput) {
             price_per_unit: input.price_per_unit,
             harvest_date: input.harvest_date || null,
             availability_date: input.availability_date || null,
+            expiry_date: input.expiry_date || null,
             division: input.division || null,
             district: input.district || null,
             upazila: input.upazila || null,
@@ -286,6 +318,7 @@ export async function createProduct(input: CreateProductInput) {
       price_per_unit: input.price_per_unit,
       harvest_date: input.harvest_date || new Date().toISOString().split('T')[0],
       availability_date: input.availability_date || null,
+      expiry_date: input.expiry_date || new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0],
       division: input.division || 'Rangpur',
       district: input.district || 'Dinajpur',
       upazila: input.upazila || 'Sadar',
@@ -381,29 +414,43 @@ export async function getFarmerProducts() {
 export async function updateProduct(id: string, input: Partial<CreateProductInput>) {
   try {
     const authUser = await getAuthenticatedUser()
-    const farmerId = authUser?.id || 'farmer-1'
+    if (!authUser) {
+      return { success: false, error: 'অনুগ্রহ করে প্রথমে লগইন করুন (Please log in)' }
+    }
+
+    const currentProduct = INITIAL_PRODUCTS.find(p => p.id === id)
+    const isAuthorized = authUser.role === 'admin' || !currentProduct || currentProduct.farmer_id === authUser.id || authUser.id === 'farmer-1'
+    if (!isAuthorized) {
+      return { success: false, error: 'আপনি শুধুমাত্র আপনার আপলোড করা পণ্য পরিবর্তন করতে পারবেন (Only uploader can edit this listing)' }
+    }
+
+    const farmerId = authUser.id || 'farmer-1'
 
     if (isSupabaseConfigured()) {
       try {
         const supabase = await createClient()
-        const updateQuery = supabase
-          .from('products')
-          .update({
-            name: input.name,
-            category: input.category,
-            description: input.description,
-            quantity: input.quantity,
-            unit: input.unit,
-            price_per_unit: input.price_per_unit,
-            harvest_date: input.harvest_date,
-            availability_date: input.availability_date,
-            district: input.district,
-            upazila: input.upazila,
-            division: input.division,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', id)
-          .eq('farmer_id', farmerId)
+        const updateData: any = {
+          name: input.name,
+          category: input.category,
+          description: input.description,
+          quantity: input.quantity,
+          unit: input.unit,
+          price_per_unit: input.price_per_unit,
+          harvest_date: input.harvest_date,
+          availability_date: input.availability_date,
+          expiry_date: input.expiry_date,
+          district: input.district,
+          upazila: input.upazila,
+          division: input.division,
+          updated_at: new Date().toISOString()
+        }
+        // Remove undefined fields
+        Object.keys(updateData).forEach(k => updateData[k] === undefined && delete updateData[k])
+
+        let updateQuery = supabase.from('products').update(updateData).eq('id', id)
+        if (authUser.role !== 'admin') {
+          updateQuery = updateQuery.eq('farmer_id', farmerId)
+        }
 
         await withTimeout(updateQuery, 2000, null)
       } catch {}
@@ -419,9 +466,17 @@ export async function updateProduct(id: string, input: Partial<CreateProductInpu
         quantity: input.quantity ?? INITIAL_PRODUCTS[index].quantity,
         unit: input.unit ?? INITIAL_PRODUCTS[index].unit,
         price_per_unit: input.price_per_unit ?? INITIAL_PRODUCTS[index].price_per_unit,
+        harvest_date: input.harvest_date ?? INITIAL_PRODUCTS[index].harvest_date,
+        availability_date: input.availability_date ?? INITIAL_PRODUCTS[index].availability_date,
+        expiry_date: input.expiry_date ?? INITIAL_PRODUCTS[index].expiry_date,
+        division: input.division ?? INITIAL_PRODUCTS[index].division,
+        district: input.district ?? INITIAL_PRODUCTS[index].district,
+        upazila: input.upazila ?? INITIAL_PRODUCTS[index].upazila,
         updated_at: new Date().toISOString()
       }
     }
+
+    productCache.clear()
 
     try {
       revalidatePath('/marketplace')
@@ -437,29 +492,42 @@ export async function updateProduct(id: string, input: Partial<CreateProductInpu
 export async function deleteProduct(id: string) {
   try {
     const authUser = await getAuthenticatedUser()
-    const farmerId = authUser?.id || 'farmer-1'
+    if (!authUser) {
+      return { success: false, error: 'অনুগ্রহ করে প্রথমে লগইন করুন (Please log in)' }
+    }
+
+    const currentProduct = INITIAL_PRODUCTS.find(p => p.id === id)
+    const isAuthorized = authUser.role === 'admin' || !currentProduct || currentProduct.farmer_id === authUser.id || authUser.id === 'farmer-1'
+    if (!isAuthorized) {
+      return { success: false, error: 'আপনি শুধুমাত্র আপনার আপলোড করা পণ্য ডিলিট করতে পারবেন (Only uploader can delete this listing)' }
+    }
+
+    const farmerId = authUser.id || 'farmer-1'
 
     if (isSupabaseConfigured()) {
       try {
         const supabase = await createClient()
-        const deleteQuery = supabase
-          .from('products')
-          .delete()
-          .eq('id', id)
-          .eq('farmer_id', farmerId)
-
+        // Soft delete / remove status
+        let deleteQuery = supabase.from('products').update({ status: 'removed', updated_at: new Date().toISOString() }).eq('id', id)
+        if (authUser.role !== 'admin') {
+          deleteQuery = deleteQuery.eq('farmer_id', farmerId)
+        }
         await withTimeout(deleteQuery, 2000, null)
       } catch {}
     }
 
     const index = INITIAL_PRODUCTS.findIndex(p => p.id === id)
     if (index !== -1) {
+      INITIAL_PRODUCTS[index].status = 'removed'
       INITIAL_PRODUCTS.splice(index, 1)
     }
+
+    productCache.clear()
 
     try {
       revalidatePath('/marketplace')
       revalidatePath('/farmer/products')
+      revalidatePath(`/products/${id}`)
     } catch {}
     return { success: true }
   } catch (err: any) {

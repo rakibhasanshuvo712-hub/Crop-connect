@@ -1,7 +1,7 @@
 /**
  * CropConnect Automated QA Test Suite: Security, Input Sanitization & Administrative Geography
  */
-import { DIVISIONS, DISTRICTS, ProductCategory, Division } from '../src/lib/constants'
+import { DIVISIONS, DISTRICTS, ProductCategory, Division, ALL_DISTRICTS, getUpazilasForDistrict } from '../src/lib/constants'
 import { getProducts } from '../src/lib/actions/products'
 import { createProduct } from '../src/lib/actions/products'
 
@@ -22,6 +22,22 @@ export async function runSecurityAndLocationTests(): Promise<{ name: string; pas
     results.push({ name: 'Geography: Complete 8 Administrative Divisions & District Hierarchy', passed: true })
   } catch (err: any) {
     results.push({ name: 'Geography: Complete 8 Administrative Divisions & District Hierarchy', passed: false, error: err.message })
+  }
+
+  // Test 1b: All 64 Districts & Upazila Coverage
+  try {
+    if (ALL_DISTRICTS.length !== 64) {
+      throw new Error(`Expected exactly 64 districts in Bangladesh, got ${ALL_DISTRICTS.length}`)
+    }
+    for (const dist of ALL_DISTRICTS) {
+      const upzs = getUpazilasForDistrict(dist)
+      if (!upzs || upzs.length === 0) {
+        throw new Error(`District "${dist}" has no mapped upazilas`)
+      }
+    }
+    results.push({ name: 'Geography: All 64 Districts and Upazilas mapped comprehensively', passed: true })
+  } catch (err: any) {
+    results.push({ name: 'Geography: All 64 Districts and Upazilas mapped comprehensively', passed: false, error: err.message })
   }
 
   // Test 2: Security & SQL Injection Resilience on Catalog Search

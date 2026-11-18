@@ -31,6 +31,7 @@ interface MarketplacePageProps {
   searchParams: Promise<{
     category?: string
     district?: string
+    upazila?: string
     division?: string
     search?: string
     minPrice?: string
@@ -45,6 +46,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   const { products, count } = await getProducts({
     category: resolvedParams.category,
     district: resolvedParams.district,
+    upazila: resolvedParams.upazila,
     division: resolvedParams.division,
     search: resolvedParams.search,
     minPrice: resolvedParams.minPrice ? Number(resolvedParams.minPrice) : undefined,

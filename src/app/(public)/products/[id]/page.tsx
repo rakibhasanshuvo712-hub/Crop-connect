@@ -16,9 +16,12 @@ import {
   Sparkles,
   Info,
   CheckCircle2,
-  Clock
+  Clock,
+  AlertTriangle
 } from 'lucide-react'
 import { getProductById } from '@/lib/actions/products'
+import { getAuthenticatedUser } from '@/lib/actions/auth'
+import { ProductOwnerActions } from '@/components/products/product-owner-actions'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
@@ -96,6 +99,10 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     return null
   }
 
+  const authUser = await getAuthenticatedUser()
+  const isExpired = product.expiry_date ? new Date(product.expiry_date).getTime() < Date.now() : false
+  const isRemoved = product.status === 'removed'
+
   const categoryInfo = PRODUCT_CATEGORIES.find(c => c.id === product.category)
   const primaryImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80'
 
@@ -165,6 +172,27 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      {/* Owner Quick Action Bar (if uploader or admin) */}
+      <ProductOwnerActions
+        productId={product.id}
+        productName={product.name}
+        farmerId={product.farmer_id}
+        currentUserId={authUser?.id}
+        currentUserRole={authUser?.role}
+      />
+
+      {/* Warning banner if expired or removed */}
+      {(isExpired || isRemoved) && (
+        <div className="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-xs text-rose-800 font-bold flex items-center gap-2.5 shadow-xs">
+          <AlertTriangle className="h-5 w-5 text-rose-600 shrink-0" />
+          <span>
+            {isRemoved
+              ? 'এই ফসলটি কৃষক কর্তৃক মার্কেটপ্লেস থেকে মুছে ফেলা হয়েছে (This listing was removed by the farmer).'
+              : 'এই ফসলটির মেয়াদ উত্তীর্ণ হয়ে গেছে এবং মার্কেটপ্লেস থেকে লুকানো হয়েছে (This listing has expired and is no longer available for orders).'}
+          </span>
+        </div>
+      )}
+
       {/* Back button */}
       <div>
         <Link
@@ -191,9 +219,19 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 <span>{categoryInfo?.icon}</span>
                 <span>{categoryInfo?.name}</span>
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-xs">
-                Active Crop
-              </span>
+              {isExpired ? (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-600 text-white shadow-xs">
+                  Expired
+                </span>
+              ) : isRemoved ? (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-600 text-white shadow-xs">
+                  Removed
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-600 text-white shadow-xs">
+                  Active Crop
+                </span>
+              )}
             </div>
           </div>
 
@@ -212,6 +250,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                   <span className="flex items-center gap-1">
                     <Calendar className="h-3.5 w-3.5 text-slate-400" />
                     <span>Harvest Date: {formatDate(product.harvest_date)}</span>
+                  </span>
+                )}
+                {product.expiry_date && (
+                  <span className={`flex items-center gap-1 font-semibold px-2.5 py-1 rounded-lg ${isExpired ? 'bg-rose-50 text-rose-700' : 'bg-amber-50 text-amber-800'}`}>
+                    <Clock className="h-3.5 w-3.5 text-amber-600" />
+                    <span>{isExpired ? 'মেয়াদ উত্তীর্ণ: ' : 'মেয়াদ শেষ: '}{formatDate(product.expiry_date)}</span>
                   </span>
                 )}
                 <span className="flex items-center gap-1">
@@ -287,7 +331,20 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
             </div>
 
             {/* Direct Order Form Modal Component */}
-            <OrderModal product={product} />
+            {isExpired || isRemoved ? (
+              <div className="p-4 rounded-2xl bg-slate-100 border border-slate-200 text-center space-y-1">
+                <span className="text-xs font-bold text-slate-700 block">
+                  {isRemoved
+                    ? 'ফসলটি কৃষক কর্তৃক মুছে ফেলা হয়েছে (Listing Removed)'
+                    : 'মেয়াদ উত্তীর্ণ ফসল (Listing Expired)'}
+                </span>
+                <span className="text-[11px] text-slate-500 block">
+                  এই ফসলটির জন্য নতুন কোনো অর্ডার গ্রহণ করা হচ্ছে না।
+                </span>
+              </div>
+            ) : (
+              <OrderModal product={product} />
+            )}
 
             <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
               <span>Security Guarantee</span>

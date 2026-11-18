@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { Filter, X, Search, RotateCcw, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { PRODUCT_CATEGORIES, DIVISIONS, DISTRICTS, Division } from '@/lib/constants'
+import { PRODUCT_CATEGORIES, DIVISIONS, DISTRICTS, Division, ALL_DISTRICTS, getUpazilasForDistrict } from '@/lib/constants'
 
 export function MarketplaceFilters() {
   const router = useRouter()
@@ -14,6 +14,7 @@ export function MarketplaceFilters() {
   const currentCategory = searchParams.get('category') || 'all'
   const currentDivision = (searchParams.get('division') || 'all') as Division | 'all'
   const currentDistrict = searchParams.get('district') || 'all'
+  const currentUpazila = searchParams.get('upazila') || 'all'
   const currentSearch = searchParams.get('search') || ''
   const currentSort = searchParams.get('sortBy') || 'latest'
   const currentMinPrice = searchParams.get('minPrice') || ''
@@ -22,6 +23,7 @@ export function MarketplaceFilters() {
   const [search, setSearch] = useState(currentSearch)
   const [division, setDivision] = useState(currentDivision)
   const [district, setDistrict] = useState(currentDistrict)
+  const [upazila, setUpazila] = useState(currentUpazila)
   const [minPrice, setMinPrice] = useState(currentMinPrice)
   const [maxPrice, setMaxPrice] = useState(currentMaxPrice)
   const [mobileExpanded, setMobileExpanded] = useState(false)
@@ -44,6 +46,9 @@ export function MarketplaceFilters() {
       if (district && district !== 'all') params.set('district', district)
       else params.delete('district')
 
+      if (upazila && upazila !== 'all') params.set('upazila', upazila)
+      else params.delete('upazila')
+
       if (minPrice) params.set('minPrice', minPrice)
       else params.delete('minPrice')
 
@@ -65,12 +70,14 @@ export function MarketplaceFilters() {
     setSearch('')
     setDivision('all')
     setDistrict('all')
+    setUpazila('all')
     setMinPrice('')
     setMaxPrice('')
     router.push('/marketplace')
   }
 
-  const availableDistricts = division !== 'all' ? DISTRICTS[division as Division] || [] : []
+  const availableDistricts = division !== 'all' ? (DISTRICTS[division as Division] || []) : ALL_DISTRICTS
+  const availableUpazilas = district !== 'all' ? getUpazilasForDistrict(district) : []
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200/90 p-4 sm:p-5 shadow-xs">
@@ -161,6 +168,7 @@ export function MarketplaceFilters() {
           onChange={(e) => {
             setDivision(e.target.value as any)
             setDistrict('all')
+            setUpazila('all')
           }}
           className="w-full text-xs h-9 rounded-xl border border-slate-200 bg-white px-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
         >
@@ -172,17 +180,35 @@ export function MarketplaceFilters() {
       </div>
 
       {/* District Selector */}
-      {availableDistricts.length > 0 && (
+      <div className="space-y-1.5">
+        <label className="text-xs font-semibold text-slate-700">District (জেলা - সকল ৬৪ জেলা)</label>
+        <select
+          value={district}
+          onChange={(e) => {
+            setDistrict(e.target.value)
+            setUpazila('all')
+          }}
+          className="w-full text-xs h-9 rounded-xl border border-slate-200 bg-white px-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
+        >
+          <option value="all">{division !== 'all' ? `All Districts in ${division}` : 'All 64 Districts (সকল জেলা)'}</option>
+          {availableDistricts.map(dist => (
+            <option key={dist} value={dist}>{dist}</option>
+          ))}
+        </select>
+      </div>
+
+      {/* Upazila Selector */}
+      {availableUpazilas.length > 0 && (
         <div className="space-y-1.5">
-          <label className="text-xs font-semibold text-slate-700">District (জেলা)</label>
+          <label className="text-xs font-semibold text-slate-700">Upazila (উপজেলা)</label>
           <select
-            value={district}
-            onChange={(e) => setDistrict(e.target.value)}
+            value={upazila}
+            onChange={(e) => setUpazila(e.target.value)}
             className="w-full text-xs h-9 rounded-xl border border-slate-200 bg-white px-2.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-600"
           >
-            <option value="all">All Districts in {division}</option>
-            {availableDistricts.map(dist => (
-              <option key={dist} value={dist}>{dist}</option>
+            <option value="all">All Upazilas in {district} (সকল উপজেলা)</option>
+            {availableUpazilas.map(upz => (
+              <option key={upz} value={upz}>{upz}</option>
             ))}
           </select>
         </div>
