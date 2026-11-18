@@ -7,6 +7,8 @@ import {
   ShieldCheck,
   User,
   Phone,
+  PhoneCall,
+  MessageCircle,
   Mail,
   ArrowLeft,
   Truck,
@@ -216,6 +218,33 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 <span className="font-bold text-slate-800">{product.farmer_profile?.total_sales || 24}+ Completed</span>
               </div>
             </div>
+
+            {/* Direct Connect Buttons: Phone & WhatsApp */}
+            {(() => {
+              const rawPhone = product.farmer?.phone || '01711002233'
+              const cleanDigits = rawPhone.replace(/\D/g, '')
+              const waDigits = cleanDigits.startsWith('88') ? cleanDigits : (cleanDigits.startsWith('0') ? '88' + cleanDigits : '880' + cleanDigits)
+              return (
+                <div className="pt-2 grid grid-cols-2 gap-2">
+                  <a
+                    href={`tel:${rawPhone}`}
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-colors shadow-xs text-center"
+                  >
+                    <PhoneCall className="w-3.5 h-3.5 shrink-0" />
+                    <span>কল করুন ({rawPhone})</span>
+                  </a>
+                  <a
+                    href={`https://wa.me/${waDigits}?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি CropConnect থেকে আপনার '${product.name}' ফসলটি সম্পর্কে জানতে যোগাযোগ করছি।`)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs transition-colors shadow-xs text-center"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 shrink-0" />
+                    <span>WhatsApp চ্যাট</span>
+                  </a>
+                </div>
+              )
+            })()}
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
               <Link
