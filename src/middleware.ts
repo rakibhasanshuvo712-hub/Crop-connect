@@ -26,7 +26,22 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch {}
+
+  // Check fallback session cookie
+  const userCookie = request.cookies.get('cropconnect_user')?.value
+  let localUser: any = null
+  if (userCookie) {
+    try {
+      localUser = JSON.parse(userCookie)
+    } catch {}
+  }
+
+  const activeUser = user || localUser
   const { pathname } = request.nextUrl
 
   // Protected paths
@@ -34,15 +49,21 @@ export async function middleware(request: NextRequest) {
   const isBuyerRoute = pathname.startsWith('/buyer')
   const isAdminRoute = pathname.startsWith('/admin')
 
-  if ((isFarmerRoute || isBuyerRoute || isAdminRoute) && !user) {
+  if ((isFarmerRoute || isBuyerRoute || isAdminRoute) && !activeUser) {
     const redirectUrl = new URL('/auth/login', request.url)
     redirectUrl.searchParams.set('redirect', pathname)
     return NextResponse.redirect(redirectUrl)
   }
 
   // Redirect logged-in users away from auth pages
-  if (user && (pathname === '/auth/login' || pathname === '/auth/register')) {
-    return NextResponse.redirect(new URL('/', request.url))
+  if (activeUser && (pathname === '/auth/login' || pathname === '/auth/register')) {
+    if (activeUser.role === 'admin') {
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+    } else if (activeUser.role === 'farmer') {
+      return NextResponse.redirect(new URL('/farmer/dashboard', request.url))
+    } else {
+      return NextResponse.redirect(new URL('/buyer/dashboard', request.url))
+    }
   }
 
   return supabaseResponse

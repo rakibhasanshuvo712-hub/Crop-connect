@@ -24,6 +24,7 @@ import { PRODUCT_CATEGORIES } from '@/lib/constants'
 import { OrderModal } from './order-modal'
 import { CropLocationMap } from '@/components/location/crop-location-map'
 import { InquiryModal } from '@/components/marketplace/inquiry-modal'
+import { ReportListingModal } from '@/components/marketplace/report-listing-modal'
 
 interface ProductPageProps {
   params: Promise<{ id: string }>
@@ -229,6 +230,13 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                 productTitle={product.name}
                 farmerId={product.farmer_id || product.farmer?.id || 'farmer-1'}
                 farmerName={product.farmer?.full_name || 'Farmer'}
+              />
+            </div>
+
+            <div className="pt-2 text-right">
+              <ReportListingModal
+                reportedItem={`${product.name} (Farmer: ${product.farmer?.full_name || 'Al-Amin'})`}
+                reportedType="Product Listing"
               />
             </div>
           </div>
