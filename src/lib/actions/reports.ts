@@ -74,7 +74,9 @@ export async function submitComplaint(data: {
       })
     } catch {}
 
-    revalidatePath('/admin/reports')
+    try {
+      revalidatePath('/admin/reports')
+    } catch {}
     return { success: true, complaint: newComplaint }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to submit complaint' }
@@ -106,7 +108,9 @@ export async function resolveComplaint(id: string, action: 'resolved' | 'dismiss
       return c
     })
 
-    revalidatePath('/admin/reports')
+    try {
+      revalidatePath('/admin/reports')
+    } catch {}
     return { success: true }
   } catch (err: any) {
     return { success: false, error: err.message || 'Failed to resolve' }

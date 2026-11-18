@@ -217,6 +217,47 @@ export async function signOutUser() {
   redirect('/auth/login')
 }
 
+export async function getAuthenticatedUser(): Promise<{ id: string; email: string; full_name: string; role: UserRole; farm_name?: string } | null> {
+  try {
+    const cookieStore = await cookies()
+    const userCookie = cookieStore.get('cropconnect_user')?.value
+    if (userCookie) {
+      try {
+        const parsed = JSON.parse(userCookie)
+        if (parsed?.id && parsed?.email) {
+          return {
+            id: parsed.id,
+            email: parsed.email,
+            full_name: parsed.full_name || parsed.email.split('@')[0],
+            role: (parsed.role as UserRole) || 'buyer',
+            farm_name: parsed.farm_name
+          }
+        }
+      } catch {}
+    }
+  } catch {}
+
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role, full_name')
+        .eq('id', user.id)
+        .single()
+      return {
+        id: user.id,
+        email: user.email || '',
+        full_name: profile?.full_name || user.email?.split('@')[0] || 'User',
+        role: (profile?.role as UserRole) || 'buyer'
+      }
+    }
+  } catch {}
+
+  return null
+}
+
 export async function getCurrentUserProfile() {
   const cookieStore = await cookies()
   const userCookie = cookieStore.get('cropconnect_user')?.value
