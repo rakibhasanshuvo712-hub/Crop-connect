@@ -67,7 +67,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
     openGraph: {
       title,
       description,
-      url: `https://cropconnect-delta.vercel.app/products/${product.id}`,
+      url: `https://krishibazar-app.vercel.app/products/${product.id}`,
       type: 'article',
       images: [
         {
@@ -109,7 +109,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
     category: categoryInfo?.name || product.category,
     offers: {
       '@type': 'Offer',
-      url: `https://cropconnect-delta.vercel.app/products/${product.id}`,
+      url: `https://krishibazar-app.vercel.app/products/${product.id}`,
       priceCurrency: 'BDT',
       price: product.price_per_unit,
       priceValidUntil: '2027-12-31',
@@ -137,19 +137,19 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
         '@type': 'ListItem',
         position: 1,
         name: 'হোম (Home)',
-        item: 'https://cropconnect-delta.vercel.app',
+        item: 'https://krishibazar-app.vercel.app',
       },
       {
         '@type': 'ListItem',
         position: 2,
         name: 'কৃষি বাজার (Marketplace)',
-        item: 'https://cropconnect-delta.vercel.app/marketplace',
+        item: 'https://krishibazar-app.vercel.app/marketplace',
       },
       {
         '@type': 'ListItem',
         position: 3,
         name: product.name,
-        item: `https://cropconnect-delta.vercel.app/products/${product.id}`,
+        item: `https://krishibazar-app.vercel.app/products/${product.id}`,
       },
     ],
   }

@@ -3,7 +3,7 @@ import { INITIAL_PRODUCTS } from '@/lib/seed-data'
 import { PRODUCT_CATEGORIES } from '@/lib/constants'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://cropconnect-delta.vercel.app'
+  const baseUrl = 'https://krishibazar-app.vercel.app'
   const currentDate = new Date().toISOString()
 
   // Static core routes

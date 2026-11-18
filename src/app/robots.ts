@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://cropconnect-delta.vercel.app'
+  const baseUrl = 'https://krishibazar-app.vercel.app'
 
   return {
     rules: [

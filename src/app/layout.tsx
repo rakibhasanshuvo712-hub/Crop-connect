@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://cropconnect-delta.vercel.app'),
+  metadataBase: new URL('https://krishibazar-app.vercel.app'),
   title: {
     default: `${APP_CONFIG.name} — ${APP_CONFIG.tagline}`,
     template: `%s | ${APP_CONFIG.name}`,
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: `${APP_CONFIG.name} — AI-Powered Agricultural Marketplace`,
     description: APP_CONFIG.description,
-    url: 'https://cropconnect-delta.vercel.app',
+    url: 'https://krishibazar-app.vercel.app',
     siteName: APP_CONFIG.name,
     locale: 'bn_BD',
     type: 'website',

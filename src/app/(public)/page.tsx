@@ -30,12 +30,12 @@ export default async function HomePage() {
     '@type': 'WebSite',
     name: 'কৃষিবাজার (KrishiBazar)',
     alternateName: 'কৃষিবাজার বাংলাদেশ',
-    url: 'https://cropconnect-delta.vercel.app',
+    url: 'https://krishibazar-app.vercel.app',
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: 'https://cropconnect-delta.vercel.app/marketplace?search={search_term_string}',
+        urlTemplate: 'https://krishibazar-app.vercel.app/marketplace?search={search_term_string}',
       },
       'query-input': 'required name=search_term_string',
     },
@@ -45,8 +45,8 @@ export default async function HomePage() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'কৃষিবাজার বাংলাদেশ',
-    url: 'https://cropconnect-delta.vercel.app',
-    logo: 'https://cropconnect-delta.vercel.app/opengraph-image',
+    url: 'https://krishibazar-app.vercel.app',
+    logo: 'https://krishibazar-app.vercel.app/opengraph-image',
     description: 'AI-Powered Direct Agricultural Marketplace connecting farmers in Bangladesh directly with wholesale and retail buyers.',
     contactPoint: {
       '@type': 'ContactPoint',
