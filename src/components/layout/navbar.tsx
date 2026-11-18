@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { Sprout, ShoppingBag, Bot, LineChart, Menu, X, User, LogIn, LogOut, ShieldCheck, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { createClient } from '@/lib/supabase/client'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/client'
 import { APP_CONFIG } from '@/lib/constants'
 import { NotificationBell } from './notification-bell'
 import { useLanguage } from '@/context/language-context'
@@ -31,20 +31,22 @@ export function Navbar() {
         } catch {}
       }
 
-      const supabase = createClient()
-      supabase.auth.getUser().then(({ data: { user } }) => {
-        if (user) {
-          setUser(user)
-          supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
-            .then(({ data }) => {
-              if (data?.role) setRole(data.role)
-            })
-        }
-      })
+      if (isSupabaseConfigured()) {
+        const supabase = createClient()
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (user) {
+            setUser(user)
+            supabase
+              .from('profiles')
+              .select('role')
+              .eq('id', user.id)
+              .single()
+              .then(({ data }) => {
+                if (data?.role) setRole(data.role)
+              })
+          }
+        })
+      }
     } catch {
       // offline / demo mode
     }

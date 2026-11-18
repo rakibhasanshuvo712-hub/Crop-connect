@@ -16,6 +16,8 @@ import { getProducts } from '@/lib/actions/products'
 import { HomeProductsFeed } from '@/components/marketplace/home-products-feed'
 import { SmartMatchModal } from '@/components/ai/smart-match-modal'
 
+export const revalidate = 60
+
 export default async function HomePage() {
   // Fetch all active products
   const { products } = await getProducts({ limit: 100, sortBy: 'created_at' })

@@ -1,6 +1,7 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
+import { withTimeout } from '@/lib/supabase/config'
 import { revalidatePath } from 'next/cache'
 import { OrderStatus } from '@/lib/constants'
 import { Order } from '@/lib/types/database'
@@ -32,15 +33,18 @@ export async function placeOrder(input: PlaceOrderInput) {
 
     // Check target product
     let targetProduct = INITIAL_PRODUCTS.find(p => p.id === input.productId)
-    try {
-      const supabase = await createClient()
-      const { data: product } = await supabase
-        .from('products')
-        .select('*')
-        .eq('id', input.productId)
-        .single()
-      if (product) targetProduct = product
-    } catch {}
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient()
+        const productQuery = supabase
+          .from('products')
+          .select('*')
+          .eq('id', input.productId)
+          .single()
+        const { data: product } = (await withTimeout(productQuery, 1500, { data: null })) as any
+        if (product) targetProduct = product
+      } catch {}
+    }
 
     if (!targetProduct) {
       return { success: false, error: 'Product not found' }
@@ -52,40 +56,44 @@ export async function placeOrder(input: PlaceOrderInput) {
 
     const total = input.quantity * targetProduct.price_per_unit
 
-    // Try Supabase RPC or direct insert
-    try {
-      const supabase = await createClient()
-      const { data: newOrder, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          buyer_id: userId,
-          farmer_id: targetProduct.farmer_id,
-          product_id: targetProduct.id,
-          quantity: input.quantity,
-          price_per_unit: targetProduct.price_per_unit,
-          total_amount: total,
-          status: 'pending',
-          buyer_note: input.buyerNote?.trim() || null,
-          delivery_address: input.deliveryAddress.trim(),
-          payment_method: 'cash_on_delivery'
-        })
-        .select()
-        .single()
+    // Try Supabase RPC or direct insert if configured
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient()
+        const insertPromise = supabase
+          .from('orders')
+          .insert({
+            buyer_id: userId,
+            farmer_id: targetProduct.farmer_id,
+            product_id: targetProduct.id,
+            quantity: input.quantity,
+            price_per_unit: targetProduct.price_per_unit,
+            total_amount: total,
+            status: 'pending',
+            buyer_note: input.buyerNote?.trim() || null,
+            delivery_address: input.deliveryAddress.trim(),
+            payment_method: 'cash_on_delivery'
+          })
+          .select()
+          .single()
 
-      if (!orderError && newOrder) {
-        // Atomic stock deduction
-        await supabase
-          .from('products')
-          .update({ quantity: targetProduct.quantity - input.quantity })
-          .eq('id', targetProduct.id)
+        const { data: newOrder, error: orderError } = (await withTimeout(insertPromise, 2000, { data: null, error: new Error('Timeout') })) as any
 
-        targetProduct.quantity -= input.quantity
-        try {
-          revalidatePath('/buyer/orders')
-        } catch {}
-        return { success: true, orderId: newOrder.id, total }
-      }
-    } catch {}
+        if (!orderError && newOrder) {
+          // Atomic stock deduction
+          await supabase
+            .from('products')
+            .update({ quantity: targetProduct.quantity - input.quantity })
+            .eq('id', targetProduct.id)
+
+          targetProduct.quantity -= input.quantity
+          try {
+            revalidatePath('/buyer/orders')
+          } catch {}
+          return { success: true, orderId: newOrder.id, total }
+        }
+      } catch {}
+    }
 
     // Resilient fallback order creation
     const fallbackOrderId = `ord-${Date.now()}`
@@ -146,17 +154,20 @@ export async function updateOrderStatus(orderId: string, newStatus: OrderStatus,
       return { success: false, error: 'Unauthorized' }
     }
 
-    try {
-      const supabase = await createClient()
-      await supabase
-        .from('orders')
-        .update({
-          status: newStatus,
-          farmer_note: farmerNote || null,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', orderId)
-    } catch {}
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient()
+        const updateQuery = supabase
+          .from('orders')
+          .update({
+            status: newStatus,
+            farmer_note: farmerNote || null,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', orderId)
+        await withTimeout(updateQuery, 2000, null)
+      } catch {}
+    }
 
     // In-memory update
     const order = INITIAL_ORDERS.find(o => o.id === orderId)
@@ -183,16 +194,19 @@ export async function cancelOrder(orderId: string) {
       return { success: false, error: 'Unauthorized' }
     }
 
-    try {
-      const supabase = await createClient()
-      await supabase
-        .from('orders')
-        .update({
-          status: 'cancelled',
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', orderId)
-    } catch {}
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient()
+        const cancelQuery = supabase
+          .from('orders')
+          .update({
+            status: 'cancelled',
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', orderId)
+        await withTimeout(cancelQuery, 2000, null)
+      } catch {}
+    }
 
     const order = INITIAL_ORDERS.find(o => o.id === orderId)
     if (order) {
@@ -214,9 +228,13 @@ export async function getBuyerOrders() {
     const authUser = await getAuthenticatedUser()
     const buyerId = authUser?.id || 'buyer-1'
 
+    if (!isSupabaseConfigured()) {
+      return INITIAL_ORDERS.filter(o => o.buyer_id === buyerId || o.buyer_id === 'buyer-1')
+    }
+
     try {
       const supabase = await createClient()
-      const { data, error } = await supabase
+      const query = supabase
         .from('orders')
         .select(`
           *,
@@ -226,8 +244,9 @@ export async function getBuyerOrders() {
         .eq('buyer_id', buyerId)
         .order('created_at', { ascending: false })
 
-      if (!error && data && data.length > 0) {
-        return data as Order[]
+      const res: any = await withTimeout(query, 1800, null)
+      if (res && !res.error && res.data && res.data.length > 0) {
+        return res.data as Order[]
       }
     } catch {}
 
@@ -242,9 +261,13 @@ export async function getFarmerOrders() {
     const authUser = await getAuthenticatedUser()
     const farmerId = authUser?.id || 'farmer-1'
 
+    if (!isSupabaseConfigured()) {
+      return INITIAL_ORDERS.filter(o => o.farmer_id === farmerId || o.farmer_id === 'farmer-1')
+    }
+
     try {
       const supabase = await createClient()
-      const { data, error } = await supabase
+      const query = supabase
         .from('orders')
         .select(`
           *,
@@ -254,8 +277,9 @@ export async function getFarmerOrders() {
         .eq('farmer_id', farmerId)
         .order('created_at', { ascending: false })
 
-      if (!error && data && data.length > 0) {
-        return data as Order[]
+      const res: any = await withTimeout(query, 1800, null)
+      if (res && !res.error && res.data && res.data.length > 0) {
+        return res.data as Order[]
       }
     } catch {}
 

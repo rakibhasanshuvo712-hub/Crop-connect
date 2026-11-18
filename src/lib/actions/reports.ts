@@ -1,6 +1,7 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
+import { withTimeout } from '@/lib/supabase/config'
 import { revalidatePath } from 'next/cache'
 
 export interface Complaint {
@@ -112,13 +113,16 @@ export async function submitComplaint(data: {
 
     COMPLAINTS_STORE.unshift(newComplaint)
 
-    try {
-      const supabase = await createClient()
-      await supabase.from('product_reports').insert({
-        reason: data.reason,
-        status: 'pending'
-      })
-    } catch {}
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient()
+        const query = supabase.from('product_reports').insert({
+          reason: data.reason,
+          status: 'pending'
+        })
+        await withTimeout(query, 2000, null)
+      } catch {}
+    }
 
     try {
       revalidatePath('/admin/reports')
@@ -130,10 +134,15 @@ export async function submitComplaint(data: {
 }
 
 export async function getComplaints(): Promise<Complaint[]> {
+  if (!isSupabaseConfigured()) {
+    return COMPLAINTS_STORE
+  }
+
   try {
     const supabase = await createClient()
-    const { data } = await supabase.from('product_reports').select('*')
-    if (data && data.length > 0) {
+    const query = supabase.from('product_reports').select('*')
+    const res: any = await withTimeout(query, 1800, null)
+    if (res && res.data && res.data.length > 0) {
       // Merge with store if needed
     }
   } catch {}

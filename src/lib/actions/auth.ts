@@ -1,6 +1,7 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
+import { withTimeout } from '@/lib/supabase/config'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
@@ -22,25 +23,24 @@ export async function signUpUser(data: SignUpInput): Promise<{ success: boolean;
   const cookieStore = await cookies()
 
   // 1. Check if production Supabase is configured with a real domain
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-  const isRealSupabase = supabaseUrl.startsWith('https://') &&
-    !supabaseUrl.includes('cropconnect-demo') &&
-    !supabaseUrl.includes('your-project')
-
-  if (isRealSupabase) {
+  if (isSupabaseConfigured()) {
     try {
       const supabase = await createClient()
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: normEmail,
-        password: data.password,
-        options: {
-          data: {
-            full_name: data.fullName,
-            role: data.role,
-            phone: data.phone || null,
+      const { data: authData, error: authError } = await withTimeout(
+        supabase.auth.signUp({
+          email: normEmail,
+          password: data.password,
+          options: {
+            data: {
+              full_name: data.fullName,
+              role: data.role,
+              phone: data.phone || null,
+            },
           },
-        },
-      })
+        }),
+        2500,
+        { data: { user: null }, error: new Error('Timeout') }
+      )
 
       if (!authError && authData.user) {
         await supabase.from('profiles').upsert({
@@ -144,18 +144,17 @@ export async function signInUser(formData: { email: string; password: string }) 
   }
 
   // 2. Check if real Supabase Auth is active
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-  const isRealSupabase = supabaseUrl.startsWith('https://') &&
-    !supabaseUrl.includes('cropconnect-demo') &&
-    !supabaseUrl.includes('your-project')
-
-  if (isRealSupabase) {
+  if (isSupabaseConfigured()) {
     try {
       const supabase = await createClient()
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: normEmail,
-        password: pass,
-      })
+      const { data, error } = await withTimeout(
+        supabase.auth.signInWithPassword({
+          email: normEmail,
+          password: pass,
+        }),
+        2500,
+        { data: { user: null }, error: new Error('Timeout') }
+      )
 
       if (!error && data.user) {
         let role: UserRole = 'buyer'
@@ -205,10 +204,12 @@ export async function signInUser(formData: { email: string; password: string }) 
 }
 
 export async function signOutUser() {
-  try {
-    const supabase = await createClient()
-    await supabase.auth.signOut()
-  } catch {}
+  if (isSupabaseConfigured()) {
+    try {
+      const supabase = await createClient()
+      await withTimeout(supabase.auth.signOut(), 1500, null)
+    } catch {}
+  }
 
   const cookieStore = await cookies()
   cookieStore.delete('cropconnect_user')
@@ -237,9 +238,18 @@ export async function getAuthenticatedUser(): Promise<{ id: string; email: strin
     }
   } catch {}
 
+  // Fast-path: Skip phantom network calls if Supabase is unconfigured
+  if (!isSupabaseConfigured()) {
+    return null
+  }
+
   try {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { user } } = await withTimeout(
+      supabase.auth.getUser(),
+      1500,
+      { data: { user: null } }
+    )
     if (user) {
       const { data: profile } = await supabase
         .from('profiles')
@@ -276,9 +286,18 @@ export async function getCurrentUserProfile() {
     } catch {}
   }
 
+  // Fast-path: Skip phantom network calls if Supabase is unconfigured
+  if (!isSupabaseConfigured()) {
+    return null
+  }
+
   try {
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { user } } = await withTimeout(
+      supabase.auth.getUser(),
+      1500,
+      { data: { user: null } }
+    )
 
     if (!user) return null
 

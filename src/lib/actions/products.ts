@@ -1,6 +1,7 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
+import { createClient, isSupabaseConfigured } from '@/lib/supabase/server'
+import { withTimeout } from '@/lib/supabase/config'
 import { revalidatePath } from 'next/cache'
 import { ProductCategory, UnitType, Division } from '@/lib/constants'
 import { Product } from '@/lib/types/database'
@@ -96,6 +97,13 @@ export async function getProducts(filters?: {
     return cached.data
   }
 
+  // Fast path: if Supabase is unconfigured/demo, return instant seeded store
+  if (!isSupabaseConfigured()) {
+    const fallback = filterAndSortProducts(INITIAL_PRODUCTS, filters)
+    productCache.set(cacheKey, { data: fallback, expiresAt: Date.now() + CACHE_TTL_MS })
+    return fallback
+  }
+
   try {
     const supabase = await createClient()
 
@@ -142,15 +150,14 @@ export async function getProducts(filters?: {
     const offset = filters?.offset || 0
     query = query.range(offset, offset + limit - 1)
 
-    const { data, error, count } = await query
-
-    if (error || !data || data.length === 0) {
+    const res: any = await withTimeout(query, 1800, null)
+    if (!res || res.error || !res.data || res.data.length === 0) {
       const fallback = filterAndSortProducts(INITIAL_PRODUCTS, filters)
       productCache.set(cacheKey, { data: fallback, expiresAt: Date.now() + CACHE_TTL_MS })
       return fallback
     }
 
-    const result = { products: data as Product[], count: count || data.length }
+    const result = { products: res.data as Product[], count: res.count || res.data.length }
     productCache.set(cacheKey, { data: result, expiresAt: Date.now() + CACHE_TTL_MS })
     return result
   } catch {
@@ -161,10 +168,15 @@ export async function getProducts(filters?: {
 }
 
 export async function getProductById(id: string): Promise<Product | null> {
+  if (!isSupabaseConfigured()) {
+    const found = INITIAL_PRODUCTS.find(p => p.id === id)
+    return found || null
+  }
+
   try {
     const supabase = await createClient()
 
-    const { data, error } = await supabase
+    const query = supabase
       .from('products')
       .select(`
         *,
@@ -175,8 +187,9 @@ export async function getProductById(id: string): Promise<Product | null> {
       .eq('id', id)
       .single()
 
-    if (!error && data) {
-      return data as Product
+    const res: any = await withTimeout(query, 1800, null)
+    if (res && !res.error && res.data) {
+      return res.data as Product
     }
 
     const found = INITIAL_PRODUCTS.find(p => p.id === id)
@@ -211,49 +224,53 @@ export async function createProduct(input: CreateProductInput) {
 
     const userId = authUser.id
 
-    try {
-      const supabase = await createClient()
-      const { data: newProduct, error } = await supabase
-        .from('products')
-        .insert({
-          farmer_id: userId,
-          name: input.name.trim(),
-          category: input.category,
-          description: input.description?.trim() || null,
-          quantity: input.quantity,
-          unit: input.unit,
-          price_per_unit: input.price_per_unit,
-          harvest_date: input.harvest_date || null,
-          availability_date: input.availability_date || null,
-          division: input.division || null,
-          district: input.district || null,
-          upazila: input.upazila || null,
-          status: 'active',
-          is_featured: false,
-          view_count: 0,
-        })
-        .select()
-        .single()
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient()
+        const insertPromise = supabase
+          .from('products')
+          .insert({
+            farmer_id: userId,
+            name: input.name.trim(),
+            category: input.category,
+            description: input.description?.trim() || null,
+            quantity: input.quantity,
+            unit: input.unit,
+            price_per_unit: input.price_per_unit,
+            harvest_date: input.harvest_date || null,
+            availability_date: input.availability_date || null,
+            division: input.division || null,
+            district: input.district || null,
+            upazila: input.upazila || null,
+            status: 'active',
+            is_featured: false,
+            view_count: 0,
+          })
+          .select()
+          .single()
 
-      if (!error && newProduct) {
-        if (input.image_urls && input.image_urls.length > 0) {
-          const imageRecords = input.image_urls.map((url, idx) => ({
-            product_id: newProduct.id,
-            url,
-            is_primary: idx === 0,
-            sort_order: idx,
-          }))
-          await supabase.from('product_images').insert(imageRecords)
+        const { data: newProduct, error } = (await withTimeout(insertPromise, 2500, { data: null, error: new Error('Timeout') })) as any
+
+        if (!error && newProduct) {
+          if (input.image_urls && input.image_urls.length > 0) {
+            const imageRecords = input.image_urls.map((url, idx) => ({
+              product_id: newProduct.id,
+              url,
+              is_primary: idx === 0,
+              sort_order: idx,
+            }))
+            await supabase.from('product_images').insert(imageRecords)
+          }
+
+          productCache.clear()
+          try {
+            revalidatePath('/marketplace')
+            revalidatePath('/farmer/products')
+          } catch {}
+          return { success: true, product: newProduct }
         }
-
-        productCache.clear()
-        try {
-          revalidatePath('/marketplace')
-          revalidatePath('/farmer/products')
-        } catch {}
-        return { success: true, product: newProduct }
-      }
-    } catch {}
+      } catch {}
+    }
 
     productCache.clear()
 
@@ -334,9 +351,13 @@ export async function getFarmerProducts() {
     const authUser = await getAuthenticatedUser()
     const farmerId = authUser?.id || 'farmer-1'
 
+    if (!isSupabaseConfigured()) {
+      return INITIAL_PRODUCTS.filter(p => p.farmer_id === farmerId || p.farmer_id === 'farmer-1')
+    }
+
     try {
       const supabase = await createClient()
-      const { data, error } = await supabase
+      const query = supabase
         .from('products')
         .select(`
           *,
@@ -345,8 +366,9 @@ export async function getFarmerProducts() {
         .eq('farmer_id', farmerId)
         .order('created_at', { ascending: false })
 
-      if (!error && data && data.length > 0) {
-        return data as Product[]
+      const res: any = await withTimeout(query, 1800, null)
+      if (res && !res.error && res.data && res.data.length > 0) {
+        return res.data as Product[]
       }
     } catch {}
 
@@ -361,31 +383,31 @@ export async function updateProduct(id: string, input: Partial<CreateProductInpu
     const authUser = await getAuthenticatedUser()
     const farmerId = authUser?.id || 'farmer-1'
 
-    try {
-      const supabase = await createClient()
-      const { error } = await supabase
-        .from('products')
-        .update({
-          name: input.name,
-          category: input.category,
-          description: input.description,
-          quantity: input.quantity,
-          unit: input.unit,
-          price_per_unit: input.price_per_unit,
-          harvest_date: input.harvest_date,
-          availability_date: input.availability_date,
-          district: input.district,
-          upazila: input.upazila,
-          division: input.division,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', id)
-        .eq('farmer_id', farmerId)
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient()
+        const updateQuery = supabase
+          .from('products')
+          .update({
+            name: input.name,
+            category: input.category,
+            description: input.description,
+            quantity: input.quantity,
+            unit: input.unit,
+            price_per_unit: input.price_per_unit,
+            harvest_date: input.harvest_date,
+            availability_date: input.availability_date,
+            district: input.district,
+            upazila: input.upazila,
+            division: input.division,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', id)
+          .eq('farmer_id', farmerId)
 
-      if (error) {
-        // Fall back to updating initial product in memory
-      }
-    } catch {}
+        await withTimeout(updateQuery, 2000, null)
+      } catch {}
+    }
 
     const index = INITIAL_PRODUCTS.findIndex(p => p.id === id)
     if (index !== -1) {
@@ -417,14 +439,18 @@ export async function deleteProduct(id: string) {
     const authUser = await getAuthenticatedUser()
     const farmerId = authUser?.id || 'farmer-1'
 
-    try {
-      const supabase = await createClient()
-      await supabase
-        .from('products')
-        .delete()
-        .eq('id', id)
-        .eq('farmer_id', farmerId)
-    } catch {}
+    if (isSupabaseConfigured()) {
+      try {
+        const supabase = await createClient()
+        const deleteQuery = supabase
+          .from('products')
+          .delete()
+          .eq('id', id)
+          .eq('farmer_id', farmerId)
+
+        await withTimeout(deleteQuery, 2000, null)
+      } catch {}
+    }
 
     const index = INITIAL_PRODUCTS.findIndex(p => p.id === id)
     if (index !== -1) {
