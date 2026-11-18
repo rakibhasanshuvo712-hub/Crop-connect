@@ -3,11 +3,9 @@
 import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { Sprout, LogIn, Lock, Mail, ArrowRight, ShieldCheck, User } from 'lucide-react'
+import { Sprout, Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
 import { signInUser } from '@/lib/actions/auth'
 
 function LoginForm() {
@@ -17,6 +15,7 @@ function LoginForm() {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -44,36 +43,6 @@ function LoginForm() {
       setError(err.message || 'Login failed')
     } finally {
       setLoading(false)
-    }
-  }
-
-  // Quick Demo Login helper for testing MVP features immediately
-  const handleQuickDemo = (role: 'farmer' | 'buyer' | 'admin') => {
-    if (role === 'farmer') {
-      setEmail('farmer@cropconnect.com')
-      setPassword('FarmerPassword2026!')
-      router.push('/farmer/dashboard')
-    } else if (role === 'admin') {
-      setEmail('admin@cropconnect.com')
-      setPassword('AdminPassword2026!')
-      router.push('/admin/dashboard')
-    } else {
-      setEmail('buyer@cropconnect.com')
-      setPassword('BuyerPassword2026!')
-      router.push('/buyer/dashboard')
-    }
-  }
-
-  const fillCredentials = (role: 'farmer' | 'buyer' | 'admin') => {
-    if (role === 'farmer') {
-      setEmail('farmer@cropconnect.com')
-      setPassword('FarmerPassword2026!')
-    } else if (role === 'admin') {
-      setEmail('admin@cropconnect.com')
-      setPassword('AdminPassword2026!')
-    } else {
-      setEmail('buyer@cropconnect.com')
-      setPassword('BuyerPassword2026!')
     }
   }
 
@@ -115,17 +84,27 @@ function LoginForm() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-semibold text-slate-700">Password (পাসওয়ার্ড)</label>
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-semibold text-slate-700">Password (পাসওয়ার্ড)</label>
+              </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                 <Input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="pl-9 text-xs"
+                  className="pl-9 pr-9 text-xs"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  title={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
             </div>
 
@@ -133,60 +112,6 @@ function LoginForm() {
               {loading ? 'Signing In...' : 'Sign In (লগইন করুন)'}
             </Button>
           </form>
-
-          {/* Quick Demo Access Buttons for instant MVP review */}
-          <div className="pt-4 border-t border-slate-100 space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                Demo Accounts (টেস্টিং লগইন)
-              </span>
-              <span className="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                1-Click Access
-              </span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('farmer')}
-                className="p-2 rounded-xl border border-emerald-200 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition-colors cursor-pointer text-center"
-              >
-                Farmer
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('buyer')}
-                className="p-2 rounded-xl border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-800 text-xs font-bold transition-colors cursor-pointer text-center"
-              >
-                Buyer
-              </button>
-              <button
-                type="button"
-                onClick={() => handleQuickDemo('admin')}
-                className="p-2 rounded-xl border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-800 text-xs font-bold transition-colors cursor-pointer text-center"
-              >
-                Admin
-              </button>
-            </div>
-
-            {/* Credentials breakdown card */}
-            <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 text-[11px] space-y-1.5 text-slate-600">
-              <div className="flex items-center justify-between pb-1 border-b border-slate-200/80">
-                <span className="font-bold text-purple-900">Admin Credentials:</span>
-                <button
-                  type="button"
-                  onClick={() => fillCredentials('admin')}
-                  className="text-[10px] font-bold text-purple-700 hover:underline cursor-pointer"
-                >
-                  Auto-Fill
-                </button>
-              </div>
-              <p className="font-mono text-[10px] text-slate-700">
-                Email: <strong>admin@cropconnect.com</strong><br/>
-                Password: <strong>AdminPassword2026!</strong>
-              </p>
-            </div>
-          </div>
 
           <div className="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
             <span>Don't have an account? </span>
