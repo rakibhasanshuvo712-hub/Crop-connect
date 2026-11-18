@@ -28,9 +28,9 @@ export const metadata: Metadata = {
     'ধান চাল আলু পেঁয়াজ',
     'wholesale agricultural market'
   ],
-  authors: [{ name: 'CropConnect Team' }],
-  creator: 'CropConnect Bangladesh',
-  publisher: 'CropConnect Bangladesh',
+  authors: [{ name: 'কৃষিবাজার টিম' }],
+  creator: 'কৃষিবাজার বাংলাদেশ (KrishiBazar)',
+  publisher: 'কৃষিবাজার বাংলাদেশ',
   robots: {
     index: true,
     follow: true,

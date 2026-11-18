@@ -17,7 +17,7 @@ export default async function MarketInsightsPage() {
             </h1>
           </div>
           <p className="text-xs text-slate-500">
-            Real-time asking rates, regional supply indices, and price trajectory based on CropConnect trade data.
+            Real-time asking rates, regional supply indices, and price trajectory based on কৃষিবাজার trade data.
           </p>
         </div>
         <span className="text-xs text-slate-400 font-medium">Updated: {lastUpdated}</span>

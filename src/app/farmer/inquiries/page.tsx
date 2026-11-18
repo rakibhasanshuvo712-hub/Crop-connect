@@ -226,7 +226,7 @@ export default function FarmerInquiriesPage() {
                 />
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] text-slate-400">
-                    Notification will be sent to the buyer's CropConnect dashboard.
+                    Notification will be sent to the buyer's কৃষিবাজার dashboard.
                   </span>
                   <Button
                     type="submit"

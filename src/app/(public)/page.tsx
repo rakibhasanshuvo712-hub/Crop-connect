@@ -28,8 +28,8 @@ export default async function HomePage() {
   const websiteJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'CropConnect (কৃষক সংযোগ)',
-    alternateName: 'CropConnect Bangladesh',
+    name: 'কৃষিবাজার (KrishiBazar)',
+    alternateName: 'কৃষিবাজার বাংলাদেশ',
     url: 'https://cropconnect-delta.vercel.app',
     potentialAction: {
       '@type': 'SearchAction',
@@ -44,7 +44,7 @@ export default async function HomePage() {
   const organizationJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'CropConnect Bangladesh',
+    name: 'কৃষিবাজার বাংলাদেশ',
     url: 'https://cropconnect-delta.vercel.app',
     logo: 'https://cropconnect-delta.vercel.app/opengraph-image',
     description: 'AI-Powered Direct Agricultural Marketplace connecting farmers in Bangladesh directly with wholesale and retail buyers.',

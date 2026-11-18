@@ -87,7 +87,7 @@ export function ReportListingModal({
                   অভিযোগ সফলভাবে গ্রহণ করা হয়েছে
                 </h3>
                 <p className="text-xs text-slate-600 max-w-sm mx-auto leading-relaxed">
-                  আপনার অভিযোগটি সরাসরি <strong>CropConnect Admin</strong> প্যানেলে পাঠানো হয়েছে। আমাদের টিম তদন্ত করে দ্রুত উপযুক্ত ব্যবস্থা গ্রহণ করবেন।
+                  আপনার অভিযোগটি সরাসরি <strong>কৃষিবাজার Admin</strong> প্যানেলে পাঠানো হয়েছে। আমাদের টিম তদন্ত করে দ্রুত উপযুক্ত ব্যবস্থা গ্রহণ করবেন।
                 </p>
               </div>
             ) : (

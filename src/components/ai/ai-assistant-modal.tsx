@@ -11,7 +11,7 @@ export function AIAssistantWidget() {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
     {
       role: 'assistant',
-      content: 'আসসালামু আলাইকুম! আমি CropConnect এআই কৃষি সহকারী। ফসল লিস্টিং, বাজারদর, অথবা ক্রেতার অর্ডার ব্যবস্থাপনা নিয়ে কোনো প্রশ্ন থাকলে আমাকে জানাতে পারেন।'
+      content: 'আসসালামু আলাইকুম! আমি কৃষিবাজার এআই কৃষি সহকারী। ফসল লিস্টিং, বাজারদর, অথবা ক্রেতার অর্ডার ব্যবস্থাপনা নিয়ে কোনো প্রশ্ন থাকলে আমাকে জানাতে পারেন।'
     }
   ])
   const [input, setInput] = useState('')
@@ -72,7 +72,7 @@ export function AIAssistantWidget() {
                 </div>
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <h3 className="font-bold text-sm">CropConnect AI Assistant</h3>
+                    <h3 className="font-bold text-sm">কৃষিবাজার এআই সহকারী</h3>
                     <Badge variant="accent" className="text-[10px] py-0 px-1.5">বাংলা</Badge>
                   </div>
                   <p className="text-[11px] text-emerald-100">Smart Agricultural & Market Support</p>

@@ -7,7 +7,7 @@ import { APP_CONFIG } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'আমাদের সম্পর্কে — আমাদের লক্ষ্য ও কৃষি বিপ্লব | About Us',
-  description: 'Learn about CropConnect\'s mission to eliminate middlemen and empower Bangladeshi farmers through AI and direct trade connectivity.',
+  description: 'Learn about কৃষিবাজার\'s mission to eliminate middlemen and empower Bangladeshi farmers through AI and direct trade connectivity.',
   alternates: {
     canonical: '/about',
   },
@@ -23,7 +23,7 @@ export default function AboutPage() {
           Empowering Bangladeshi Farmers Through Direct Technology
         </h1>
         <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
-          CropConnect was conceived with a clear vision: eliminate unnecessary middlemen in agricultural supply chains so rural farmers receive the true value of their labor while urban and institutional buyers get fresh, authentic produce at fair prices.
+          কৃষিবাজার was conceived with a clear vision: eliminate unnecessary middlemen in agricultural supply chains so rural farmers receive the true value of their labor while urban and institutional buyers get fresh, authentic produce at fair prices.
         </p>
       </div>
 
@@ -64,7 +64,7 @@ export default function AboutPage() {
       <div className="text-center bg-slate-900 text-white rounded-3xl p-8 sm:p-12 space-y-4">
         <h3 className="text-2xl font-bold">Ready to be part of the future of Bangladeshi agriculture?</h3>
         <p className="text-slate-400 text-sm max-w-xl mx-auto">
-          Whether you are a grower with harvests to sell or a business seeking dependable farm sourcing, CropConnect is built for you.
+          Whether you are a grower with harvests to sell or a business seeking dependable farm sourcing, কৃষিবাজার is built for you.
         </p>
         <div className="pt-2 flex justify-center gap-3">
           <Button variant="default" asChild className="font-bold">

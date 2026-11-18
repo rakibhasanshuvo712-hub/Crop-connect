@@ -76,11 +76,14 @@ export const USER_ROLES = ["farmer", "buyer", "admin"] as const
 export type UserRole = typeof USER_ROLES[number]
 
 export const APP_CONFIG = {
-  name: "CropConnect",
-  tagline: "Connecting Farmers. Empowering Agriculture.",
+  name: "কৃষিবাজার",
+  nameBn: "কৃষিবাজার",
+  nameEn: "KrishiBazar",
+  tagline: "কৃষকের মুখে হাসি, ন্যায্য দামে ফসলের বাজার",
   taglineBn: "কৃষকের মুখে হাসি, ন্যায্য দামে ফসলের বাজার",
-  description: "Bangladesh's premier AI-powered agricultural marketplace connecting verified farmers directly with wholesale buyers, retailers, and institutions.",
-  contactEmail: "support@cropconnect.bd",
+  taglineEn: "Connecting Farmers. Empowering Agriculture.",
+  description: "বাংলাদেশের শীর্ষস্থানীয় এআই-চালিত ডিজিটাল কৃষি বাজার — মধ্যস্বত্বভোগী ছাড়া কৃষক ও পাইকারি ক্রেতার সরাসরি কেনাবেচা।",
+  contactEmail: "support@krishibazar.bd",
   contactPhone: "+880 1700-000000",
-  address: "Dhaka, Bangladesh"
+  address: "ঢাকা, বাংলাদেশ"
 }

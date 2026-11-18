@@ -278,7 +278,7 @@ export async function createProduct(input: CreateProductInput) {
         id: `fp-${userId}`,
         profile_id: userId,
         farm_name: authUser.farm_name || `${authUser.full_name}'s Agro Farm`,
-        bio: 'CropConnect Verified Farmer',
+        bio: 'কৃষিবাজার Verified Farmer',
         district: input.district || 'Dinajpur',
         division: (input.division || 'Rangpur') as Division,
         upazila: input.upazila || 'Sadar',

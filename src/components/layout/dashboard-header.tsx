@@ -78,7 +78,7 @@ export function DashboardHeader({ role, userName }: DashboardHeaderProps) {
           onClick={handleLogout}
           disabled={loggingOut}
           className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-all shadow-xs hover:shadow-sm cursor-pointer"
-          title="Log out of CropConnect"
+          title="কৃষিবাজার থেকে লগআউট"
         >
           <LogOut className="h-4 w-4 text-rose-600" />
           <span>{loggingOut ? 'Logging out...' : 'Log Out (লগআউট)'}</span>

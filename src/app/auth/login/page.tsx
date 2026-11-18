@@ -53,10 +53,10 @@ function LoginForm() {
           <div className="w-11 h-11 rounded-2xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md">
             <Sprout className="h-6 w-6" />
           </div>
-          <span className="text-2xl font-extrabold text-slate-900">CropConnect</span>
+          <span className="text-2xl font-extrabold text-slate-900">কৃষিবাজার</span>
         </Link>
         <h2 className="text-xl font-bold text-slate-900">Sign in to your account</h2>
-        <p className="text-xs text-slate-500">Connecting Bangladeshi Farmers Directly with Buyers</p>
+        <p className="text-xs text-slate-500">বাংলাদেশের কৃষকদের সাথে সরাসরি ক্রেতাদের সংযোগ</p>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md px-4">

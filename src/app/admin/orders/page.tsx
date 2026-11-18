@@ -12,7 +12,7 @@ export default async function AdminOrdersPage() {
           Platform Transactions & Order Monitoring (লেনদেন নিরীক্ষা)
         </h1>
         <p className="text-xs text-slate-500 mt-1">
-          Complete audit log of all trade orders placed across Bangladesh on CropConnect.
+          Complete audit log of all trade orders placed across Bangladesh on কৃষিবাজার.
         </p>
       </div>
 

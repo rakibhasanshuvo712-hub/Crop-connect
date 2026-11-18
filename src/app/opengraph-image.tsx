@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'nodejs'
-export const alt = 'CropConnect - AI Agricultural Marketplace Bangladesh'
+export const alt = 'KrishiBazar - AI Agricultural Marketplace Bangladesh'
 export const size = {
   width: 1200,
   height: 630,
@@ -39,7 +39,7 @@ export default async function Image() {
             border: '1px solid rgba(255, 255, 255, 0.3)',
           }}
         >
-          <span>CropConnect Bangladesh</span>
+          <span>KrishiBazar Bangladesh</span>
           <span>|</span>
           <span>AI-Powered Agri-Commerce</span>
         </div>
@@ -53,7 +53,7 @@ export default async function Image() {
             lineHeight: 1.15,
           }}
         >
-          CropConnect
+          KrishiBazar
         </h1>
 
         <p

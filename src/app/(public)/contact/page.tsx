@@ -7,7 +7,7 @@ import { APP_CONFIG } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'যোগাযোগ ও সাপোর্ট — আমাদের সহায়তা কেন্দ্র | Contact Us',
-  description: 'Get in touch with CropConnect Bangladesh for farmer registration assistance, dispute mediation, bulk enterprise orders, or general inquiries.',
+  description: 'Get in touch with কৃষিবাজার বাংলাদেশ for farmer registration assistance, dispute mediation, bulk enterprise orders, or general inquiries.',
   alternates: {
     canonical: '/contact',
   },
@@ -19,7 +19,7 @@ export default function ContactPage() {
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <Badge variant="default">Support & Inquiries</Badge>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
-          Get in Touch with CropConnect
+          কৃষিবাজারের সাথে যোগাযোগ করুন
         </h1>
         <p className="text-sm text-slate-600">
           We are here to support farmers, wholesale buyers, retailers, and agricultural cooperatives across Bangladesh.

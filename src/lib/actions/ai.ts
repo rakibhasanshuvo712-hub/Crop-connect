@@ -139,7 +139,7 @@ export async function chatFarmerAssistant(messages: Array<{ role: 'user' | 'assi
   if (q.includes('বিষ') || q.includes('কীটনাশক') || q.includes('dose') || q.includes('pesticide') || q.includes('spray') || q.includes('রোগের ওষুধ')) {
     return {
       reply: `⚠️ **জরুরি সতর্কতা ও কৃষি পরামর্শ:**
-CropConnect এআই কোনো প্রকার নির্দিষ্ট রাসায়নিক কীটনাশক বা বিষ প্রয়োগের মাত্রা নির্ধারণ করে না, কারণ ভুল প্রয়োগে ফসলের ক্ষতি ও মানবস্বাস্থ্যের ঝুঁকি হতে পারে।
+কৃষিবাজার এআই কোনো প্রকার নির্দিষ্ট রাসায়নিক কীটনাশক বা বিষ প্রয়োগের মাত্রা নির্ধারণ করে না, কারণ ভুল প্রয়োগে ফসলের ক্ষতি ও মানবস্বাস্থ্যের ঝুঁকি হতে পারে।
 
 অনুগ্রহ করে আপনার নিকটস্থ **উপজেলা কৃষি সম্প্রসারণ কর্মকর্তা (DAE officer)** অথবা সরকার অনুমোদিত কৃষি সেবা কেন্দ্র **১৬১২৩** নম্বরে কল করে সঠিক পরামর্শ গ্রহণ করুন।`,
       isAi: false
@@ -149,7 +149,7 @@ CropConnect এআই কোনো প্রকার নির্দিষ্�
   // Order management help
   if (q.includes('অর্ডার') || q.includes('order') || q.includes('বিক্রি') || q.includes('টাকা') || q.includes('পেমেন্ট')) {
     return {
-      reply: `CropConnect প্ল্যাটফর্মে অর্ডার ব্যবস্থাপনার নিয়মাবলি:
+      reply: `কৃষিবাজার প্ল্যাটফর্মে অর্ডার ব্যবস্থাপনার নিয়মাবলি:
 ১. ক্রেতা ক্রয়াদেশ পাঠালে আপনার "Orders" পাতায় 'Pending Review' স্ট্যাটাসে জমা হবে।
 ২. পণ্যের মজুত ও দাম যাচাই করে আপনি অর্ডারটি **Accept** বা **Decline** করতে পারবেন।
 ৩. প্যাকিং শুরু হলে স্ট্যাটাস **Preparing** এবং পাঠানোর পর **Ready for Delivery** দিন।
@@ -179,13 +179,13 @@ CropConnect এআই কোনো প্রকার নির্দিষ্�
 • **তাহেরপুরী দেশি পেঁয়াজ:** ৭০ - ৭৫ ৳/কেজি
 • **টমেটো:** ৪৫ - ৫০ ৳/কেজি
 
-*বিজ্ঞপ্তি: এটি CropConnect প্ল্যাটফর্মের লিস্টিং গড় মূল্য। প্রতিদিনের সঠিক বাজারদরের জন্য আমাদের "Market Insights" পাতাটি দেখুন।*`,
+*বিজ্ঞপ্তি: এটি কৃষিবাজার প্ল্যাটফর্মের লিস্টিং গড় মূল্য। প্রতিদিনের সঠিক বাজারদরের জন্য আমাদের "Market Insights" পাতাটি দেখুন।*`,
       isAi: false
     }
   }
 
   return {
-    reply: `নমস্কার / আসসালামু আলাইকুম! আমি CropConnect এআই কৃষি সহকারী।
+    reply: `নমস্কার / আসসালামু আলাইকুম! আমি কৃষিবাজার এআই কৃষি সহকারী।
 আমি আপনাকে নিম্নলিখিত বিষয়ে সহায়তা করতে পারি:
 ১. নতুন ফসলের তালিকা তৈরি ও স্মার্ট বিবরণ লেখা
 ২. বাজারদর ও ফসল মজুত ব্যবস্থাপনা
@@ -281,7 +281,7 @@ export async function getMarketInsightsData(): Promise<{
 
   return {
     insights,
-    disclaimer: '⚠️ DISCLAIMER: Figures presented reflect asking prices and verified listings on the CropConnect marketplace. They should be considered marketplace reference points rather than mandatory government gazette rates.',
+    disclaimer: '⚠️ DISCLAIMER: Figures presented reflect asking prices and verified listings on the কৃষিবাজার marketplace. They should be considered marketplace reference points rather than mandatory government gazette rates.',
     lastUpdated: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
   }
 }
@@ -327,7 +327,7 @@ export async function getSmartMatches(criteria: {
       // Verification trust bonus
       if (product.farmer_profile?.is_verified) {
         score += 10
-        reasons.push('Farmer is NID-verified and vetted by CropConnect field team')
+        reasons.push('Farmer is NID-verified and vetted by কৃষিবাজার field team')
       }
 
       return {

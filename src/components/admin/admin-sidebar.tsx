@@ -34,8 +34,8 @@ export function AdminSidebar() {
             <Sprout className="h-5 w-5" />
           </div>
           <div>
-            <span className="font-bold text-white tracking-tight">CropConnect</span>
-            <span className="block text-[10px] text-purple-400 font-medium">Administration</span>
+            <span className="font-bold text-white tracking-tight">কৃষিবাজার</span>
+            <span className="block text-[10px] text-purple-400 font-medium">অ্যাডমিন প্যানেল</span>
           </div>
         </Link>
 

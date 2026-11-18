@@ -10,7 +10,7 @@ export default function FarmerAIAssistantPage() {
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'assistant'; content: string }>>([
     {
       role: 'assistant',
-      content: `আসসালামু আলাইকুম! আমি CropConnect এআই কৃষি পরামর্শক।
+      content: `আসসালামু আলাইকুম! আমি কৃষিবাজার এআই কৃষি পরামর্শক।
 আপনি আমাকে যেকোনো কৃষি বিষয়ক প্রশ্ন করতে পারেন:
 • ফসলের সঠিক লিস্টিং তৈরি ও দাম নির্ধারণ
 • আমন ও বোরো ধানের বর্তমান বাজার প্রবণতা
@@ -68,7 +68,7 @@ export default function FarmerAIAssistantPage() {
       <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200/80 text-xs text-amber-900 flex items-start gap-2.5">
         <AlertCircle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
         <p className="leading-relaxed">
-          <strong>কৃষি নিরাপত্তা নীতি:</strong> CropConnect এআই ফসল উৎপাদন ও বিপণন বিষয়ক সাধারণ নির্দেশিকা প্রদান করে। সংকটময় রোগের চিকিৎসায় রাসায়নিক মাত্রা নির্ধারণের জন্য সর্বদা উপজেলা কৃষি সম্প্রসারণ কর্মকর্তা (DAE) বা সরকারি হেল্পলাইন <strong>১৬১২৩</strong>-এ যোগাযোগ করুন।
+          <strong>কৃষি নিরাপত্তা নীতি:</strong> কৃষিবাজার এআই ফসল উৎপাদন ও বিপণন বিষয়ক সাধারণ নির্দেশিকা প্রদান করে। সংকটময় রোগের চিকিৎসায় রাসায়নিক মাত্রা নির্ধারণের জন্য সর্বদা উপজেলা কৃষি সম্প্রসারণ কর্মকর্তা (DAE) বা সরকারি হেল্পলাইন <strong>১৬১২৩</strong>-এ যোগাযোগ করুন।
         </p>
       </div>
 

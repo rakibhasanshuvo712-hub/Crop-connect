@@ -66,7 +66,7 @@ export function Navbar() {
                 <span className="text-xl font-bold tracking-tight text-slate-900">{APP_CONFIG.name}</span>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-sm bg-emerald-100 text-emerald-800 uppercase">BD</span>
               </div>
-              <p className="text-[10px] text-slate-500 font-medium hidden sm:block">AI Agricultural Marketplace</p>
+              <p className="text-[10px] text-emerald-700 font-semibold hidden sm:block">ডিজিটাল এআই কৃষি বাজার</p>
             </div>
           </Link>
 
@@ -207,7 +207,7 @@ export function Navbar() {
               onClick={() => setMobileMenuOpen(false)}
               className="block px-3 py-2 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
-              About CropConnect
+              আমাদের কথা (About)
             </Link>
 
             <Link

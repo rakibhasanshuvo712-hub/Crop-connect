@@ -39,13 +39,13 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
   if (!product) {
     return {
-      title: 'পণ্য পাওয়া যায়নি | CropConnect',
+      title: 'পণ্য পাওয়া যায়নি | কৃষিবাজার',
       description: 'The requested agricultural harvest could not be found.',
     }
   }
 
   const primaryImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80'
-  const title = `${product.name} (৳${product.price_per_unit}/${product.unit}) — ${product.district || 'বাংলাদেশ'} | CropConnect`
+  const title = `${product.name} (৳${product.price_per_unit}/${product.unit}) — ${product.district || 'বাংলাদেশ'} | কৃষিবাজার`
   const description = `সরাসরি কৃষক থেকে কিনুন: ${product.name}। এলাকা: ${product.district || ''}, ${product.division || ''}। বর্তমান মজুদ: ${product.quantity} ${product.unit}। মূল্য: ৳${product.price_per_unit}/${product.unit}। পাইকারি ও খুচরা কেনাবেচা।`
 
   return {
@@ -353,7 +353,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
                     <span>কল করুন ({rawPhone})</span>
                   </a>
                   <a
-                    href={`https://wa.me/${waDigits}?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি CropConnect থেকে আপনার '${product.name}' ফসলটি সম্পর্কে জানতে যোগাযোগ করছি।`)}`}
+                    href={`https://wa.me/${waDigits}?text=${encodeURIComponent(`আসসালামু আলাইকুম, আমি কৃষিবাজার থেকে আপনার '${product.name}' ফসলটি সম্পর্কে জানতে যোগাযোগ করছি।`)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-1.5 py-2.5 px-2 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs transition-colors shadow-xs text-center"

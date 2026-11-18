@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     canonical: '/marketplace',
   },
   openGraph: {
-    title: 'জাতীয় কৃষি বাজার (National Agricultural Marketplace) | CropConnect',
+    title: 'জাতীয় কৃষি বাজার (National Agricultural Marketplace) | কৃষিবাজার',
     description: 'Explore verified harvests across all districts of Bangladesh. Direct trade without middlemen.',
     url: 'https://cropconnect-delta.vercel.app/marketplace',
   },

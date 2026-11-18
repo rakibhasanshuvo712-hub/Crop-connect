@@ -40,7 +40,7 @@ export function FarmerSidebar() {
             <Sprout className="h-5 w-5" />
           </div>
           <div>
-            <span className="font-bold text-white tracking-tight">CropConnect</span>
+            <span className="font-bold text-white tracking-tight">কৃষিবাজার</span>
             <span className="block text-[10px] text-emerald-400 font-medium">Farmer Portal (কৃষক)</span>
           </div>
         </Link>
