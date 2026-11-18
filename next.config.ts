@@ -20,7 +20,10 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  compress: true, // Enable Gzip & Brotli compression for high concurrent user loads
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 86400, // Cache optimized images for 24 hours to prevent CPU re-computation
     remotePatterns: [
       {
         protocol: "https",
@@ -37,6 +40,24 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: securityHeaders,
+      },
+      {
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/(favicon.ico|manifest.webmanifest|robots.txt|sitemap.xml)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
       },
     ];
   },

@@ -22,6 +22,14 @@ export interface CreateProductInput {
   image_urls?: string[]
 }
 
+// High-concurrency in-memory cache for ultra-fast response times under heavy user traffic
+const productCache = new Map<string, { data: any; expiresAt: number }>()
+const CACHE_TTL_MS = 20 * 1000 // 20 seconds TTL
+
+export async function clearProductCache() {
+  productCache.clear()
+}
+
 function filterAndSortProducts(products: Product[], filters?: {
   category?: string
   district?: string
@@ -82,6 +90,12 @@ export async function getProducts(filters?: {
   limit?: number
   offset?: number
 }) {
+  const cacheKey = JSON.stringify(filters || {})
+  const cached = productCache.get(cacheKey)
+  if (cached && cached.expiresAt > Date.now()) {
+    return cached.data
+  }
+
   try {
     const supabase = await createClient()
 
@@ -131,12 +145,18 @@ export async function getProducts(filters?: {
     const { data, error, count } = await query
 
     if (error || !data || data.length === 0) {
-      return filterAndSortProducts(INITIAL_PRODUCTS, filters)
+      const fallback = filterAndSortProducts(INITIAL_PRODUCTS, filters)
+      productCache.set(cacheKey, { data: fallback, expiresAt: Date.now() + CACHE_TTL_MS })
+      return fallback
     }
 
-    return { products: data as Product[], count: count || data.length }
+    const result = { products: data as Product[], count: count || data.length }
+    productCache.set(cacheKey, { data: result, expiresAt: Date.now() + CACHE_TTL_MS })
+    return result
   } catch {
-    return filterAndSortProducts(INITIAL_PRODUCTS, filters)
+    const fallback = filterAndSortProducts(INITIAL_PRODUCTS, filters)
+    productCache.set(cacheKey, { data: fallback, expiresAt: Date.now() + CACHE_TTL_MS })
+    return fallback
   }
 }
 
@@ -226,6 +246,7 @@ export async function createProduct(input: CreateProductInput) {
           await supabase.from('product_images').insert(imageRecords)
         }
 
+        productCache.clear()
         try {
           revalidatePath('/marketplace')
           revalidatePath('/farmer/products')
@@ -233,6 +254,8 @@ export async function createProduct(input: CreateProductInput) {
         return { success: true, product: newProduct }
       }
     } catch {}
+
+    productCache.clear()
 
     // Resilient fallback product creation
     const fallbackProduct: Product = {

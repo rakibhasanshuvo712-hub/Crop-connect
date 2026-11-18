@@ -9,10 +9,11 @@ import { runOrderTests } from './unit-orders.test'
 import { runReportTests } from './unit-reports.test'
 import { runAuthRbacTests } from './unit-auth-rbac.test'
 import { runSecurityAndLocationTests } from './unit-security-location.test'
+import { runConcurrencyStressTests } from './stress-concurrency.test'
 
 async function runTestSuite() {
   console.log('\n============================================================')
-  console.log('   CropConnect AI Agricultural Marketplace QA Test Suite')
+  console.log('   KrishiBazar AI Agricultural Marketplace QA Test Suite')
   console.log('============================================================\n')
 
   const startTime = Date.now()
@@ -27,6 +28,7 @@ async function runTestSuite() {
     { title: '4. Dispute & Complaint Resolution Suite', runner: runReportTests },
     { title: '5. Authentication & RBAC Policy Suite', runner: runAuthRbacTests },
     { title: '6. Security, Injection Defense & Geography Suite', runner: runSecurityAndLocationTests },
+    { title: '7. High-Concurrency & Multi-User Stress Suite', runner: runConcurrencyStressTests },
   ]
 
   for (const suite of suites) {
