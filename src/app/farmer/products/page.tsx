@@ -55,6 +55,20 @@ export default async function FarmerProductsPage() {
                   <span>{p.district || 'Dinajpur'}</span>
                   <span>{p.view_count || 120} views</span>
                 </div>
+
+                <div className="pt-2 flex items-center justify-between gap-2">
+                  <Link
+                    href={`/products/${p.id}`}
+                    className="text-xs text-slate-500 hover:text-slate-900 font-semibold"
+                  >
+                    View Listing
+                  </Link>
+                  <Button variant="outline" size="sm" asChild className="h-7 text-xs font-bold text-emerald-800 border-emerald-200 hover:bg-emerald-50">
+                    <Link href={`/farmer/products/edit/${p.id}`}>
+                      Edit Details
+                    </Link>
+                  </Button>
+                </div>
               </div>
             </div>
           )

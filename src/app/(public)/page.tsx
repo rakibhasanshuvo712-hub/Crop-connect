@@ -179,6 +179,129 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* 6. VERIFIED FARMERS & PRODUCERS */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-700 uppercase tracking-wider mb-1">
+              <ShieldCheck className="h-4 w-4" />
+              <span>NID Verified Growers (যাচাইকৃত কৃষকবৃন্দ)</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              Meet Trusted Agricultural Producers
+            </h2>
+            <p className="text-sm text-slate-500 mt-1">
+              Connect directly with verified farmers practicing sustainable agriculture across Bangladesh
+            </p>
+          </div>
+
+          <Button variant="outline" size="sm" asChild className="self-start sm:self-auto gap-1">
+            <Link href="/marketplace">
+              <span>View All Farmers</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <Link
+            href="/farmers/farmer-1"
+            className="group p-6 rounded-3xl bg-white border border-slate-200 hover:border-emerald-500 transition-all shadow-xs hover:shadow-lg space-y-4 relative overflow-hidden"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-700 to-emerald-500 text-white font-extrabold text-xl flex items-center justify-center shrink-0 shadow-md">
+                A
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-bold text-base text-slate-900 truncate group-hover:text-emerald-700 transition-colors">
+                    Al-Amin Hossain
+                  </h3>
+                  <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                </div>
+                <p className="text-xs font-semibold text-emerald-800 truncate">Golden Harvest Agro Farm</p>
+                <p className="text-[11px] text-slate-400">Dinajpur, Rangpur Division</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+              Specialized in premium Miniket, Aman, and aromatic Chinigura paddy with over 12 years of certified farming.
+            </p>
+
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span className="font-bold text-slate-700">3 Active Harvests</span>
+              <span className="text-emerald-700 font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                View Farm Profile →
+              </span>
+            </div>
+          </Link>
+
+          <Link
+            href="/farmers/farmer-2"
+            className="group p-6 rounded-3xl bg-white border border-slate-200 hover:border-emerald-500 transition-all shadow-xs hover:shadow-lg space-y-4 relative overflow-hidden"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-extrabold text-xl flex items-center justify-center shrink-0 shadow-md">
+                R
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-bold text-base text-slate-900 truncate group-hover:text-emerald-700 transition-colors">
+                    Rafiqul Islam
+                  </h3>
+                  <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                </div>
+                <p className="text-xs font-semibold text-emerald-800 truncate">Bogra Organic Agro</p>
+                <p className="text-[11px] text-slate-400">Bogura, Rajshahi Division</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+              High-yield Diamond and Granola potato producer supplying commercial wholesalers and chips manufacturing hubs.
+            </p>
+
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span className="font-bold text-slate-700">2 Active Harvests</span>
+              <span className="text-emerald-700 font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                View Farm Profile →
+              </span>
+            </div>
+          </Link>
+
+          <Link
+            href="/farmers/farmer-3"
+            className="group p-6 rounded-3xl bg-white border border-slate-200 hover:border-emerald-500 transition-all shadow-xs hover:shadow-lg space-y-4 relative overflow-hidden"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-600 to-emerald-600 text-white font-extrabold text-xl flex items-center justify-center shrink-0 shadow-md">
+                K
+              </div>
+              <div className="space-y-0.5 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-bold text-base text-slate-900 truncate group-hover:text-emerald-700 transition-colors">
+                    Kamrul Hasan
+                  </h3>
+                  <ShieldCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                </div>
+                <p className="text-xs font-semibold text-emerald-800 truncate">Padma Char Spice Growers</p>
+                <p className="text-[11px] text-slate-400">Pabna, Rajshahi Division</p>
+              </div>
+            </div>
+
+            <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+              Organic Taherpuri deshi onion and dry red chili cultivator offering direct bulk dispatch to superstores.
+            </p>
+
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+              <span className="font-bold text-slate-700">4 Active Harvests</span>
+              <span className="text-emerald-700 font-bold group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                View Farm Profile →
+              </span>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* 4. HOW CROPCONNECT WORKS */}
       <section className="bg-slate-900 text-white py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">

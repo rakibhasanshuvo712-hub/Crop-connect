@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import {
   Package,
   Truck,
@@ -8,7 +9,8 @@ import {
   XCircle,
   MapPin,
   Calendar,
-  AlertCircle
+  AlertCircle,
+  ChevronRight
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -107,9 +109,16 @@ export function BuyerOrdersClient({ initialOrders }: BuyerOrdersClientProps) {
                 </div>
               </div>
 
-              {/* Cancel Button if Pending */}
-              {o.status === 'pending' && (
-                <div className="pt-3 border-t border-slate-100 flex justify-end">
+              <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <Link
+                  href={`/buyer/orders/${o.id}`}
+                  className="inline-flex items-center gap-1 text-xs font-bold text-emerald-700 hover:underline"
+                >
+                  <span>Track Order Status (অর্ডার অগ্রগতি দেখুন)</span>
+                  <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+
+                {o.status === 'pending' && (
                   <Button
                     variant="outline"
                     size="sm"
@@ -119,8 +128,8 @@ export function BuyerOrdersClient({ initialOrders }: BuyerOrdersClientProps) {
                   >
                     {cancellingId === o.id ? 'Cancelling...' : 'Cancel Request (অর্ডার বাতিল)'}
                   </Button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           )
         })

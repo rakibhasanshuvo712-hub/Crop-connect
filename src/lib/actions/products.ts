@@ -225,3 +225,71 @@ export async function getFarmerProducts() {
     return INITIAL_PRODUCTS.filter(p => p.farmer_id === 'farmer-1')
   }
 }
+
+export async function updateProduct(id: string, input: Partial<CreateProductInput>) {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      return { success: true, message: 'Updated in local/demo mode' }
+    }
+
+    const { error } = await supabase
+      .from('products')
+      .update({
+        name: input.name,
+        category: input.category,
+        description: input.description,
+        quantity: input.quantity,
+        unit: input.unit,
+        price_per_unit: input.price_per_unit,
+        harvest_date: input.harvest_date,
+        availability_date: input.availability_date,
+        district: input.district,
+        upazila: input.upazila,
+        division: input.division,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .eq('farmer_id', user.id)
+
+    if (error) {
+      return { success: false, error: error.message }
+    }
+
+    revalidatePath('/marketplace')
+    revalidatePath(`/products/${id}`)
+    revalidatePath('/farmer/products')
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to update product' }
+  }
+}
+
+export async function deleteProduct(id: string) {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      return { success: true, message: 'Deleted in demo mode' }
+    }
+
+    const { error } = await supabase
+      .from('products')
+      .delete()
+      .eq('id', id)
+      .eq('farmer_id', user.id)
+
+    if (error) {
+      return { success: false, error: error.message }
+    }
+
+    revalidatePath('/marketplace')
+    revalidatePath('/farmer/products')
+    return { success: true }
+  } catch (err: any) {
+    return { success: false, error: err.message || 'Failed to delete product' }
+  }
+}

@@ -18,9 +18,11 @@ export function AdminSidebar() {
 
   const links = [
     { href: '/admin/dashboard', label: 'Admin Overview', icon: ShieldAlert },
+    { href: '/admin/users', label: 'User Management', icon: Users },
     { href: '/admin/farmers', label: 'Farmer Verifications', icon: CheckCircle2 },
     { href: '/admin/products', label: 'Listing Moderation', icon: Package },
     { href: '/admin/orders', label: 'Platform Transactions', icon: ShoppingBag },
+    { href: '/admin/reports', label: 'Disputes & Reports', icon: ShieldAlert },
   ]
 
   return (

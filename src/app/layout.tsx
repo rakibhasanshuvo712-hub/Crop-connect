@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Toaster } from 'sonner'
 import { AIAssistantWidget } from '@/components/ai/ai-assistant-modal'
+import { LanguageProvider } from '@/context/language-context'
 import './globals.css'
 import { APP_CONFIG } from '@/lib/constants'
 
@@ -26,9 +27,11 @@ export default function RootLayout({
   return (
     <html lang="bn" suppressHydrationWarning>
       <body className="min-h-screen bg-[#fcfdfc] antialiased selection:bg-emerald-100 selection:text-emerald-900">
-        {children}
-        <AIAssistantWidget />
-        <Toaster richColors position="top-right" />
+        <LanguageProvider>
+          {children}
+          <AIAssistantWidget />
+          <Toaster richColors position="top-right" />
+        </LanguageProvider>
       </body>
     </html>
   )

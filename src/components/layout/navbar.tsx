@@ -3,16 +3,18 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Sprout, ShoppingBag, Bot, LineChart, Menu, X, User, LogIn, ShieldCheck, ChevronDown } from 'lucide-react'
-import { Button } from '@/lib/../components/ui/button'
-import { Badge } from '@/lib/../components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/client'
 import { APP_CONFIG } from '@/lib/constants'
+import { NotificationBell } from './notification-bell'
+import { useLanguage } from '@/context/language-context'
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [role, setRole] = useState<string | null>(null)
-  const [lang, setLang] = useState<'bn' | 'en'>('bn')
+  const { language, setLanguage, t } = useLanguage()
 
   useEffect(() => {
     try {
@@ -99,12 +101,16 @@ export function Navbar() {
 
           {/* Right Action buttons */}
           <div className="flex items-center gap-2.5">
+            {/* Notification Bell */}
+            <NotificationBell />
+
             {/* Language toggle badge */}
             <button
-              onClick={() => setLang(lang === 'bn' ? 'en' : 'bn')}
-              className="hidden lg:flex items-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50 cursor-pointer"
+              onClick={() => setLanguage(language === 'bn' ? 'en' : 'bn')}
+              className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+              title="Change Language (ভাষা পরিবর্তন)"
             >
-              <span>{lang === 'bn' ? 'বাংলা' : 'EN'}</span>
+              <span>{language === 'bn' ? '🇧🇩 বাংলা' : '🌐 EN'}</span>
             </button>
 
             {user ? (

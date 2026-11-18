@@ -22,6 +22,8 @@ import { Card } from '@/components/ui/card'
 import { formatBDT, formatDate } from '@/lib/utils'
 import { PRODUCT_CATEGORIES } from '@/lib/constants'
 import { OrderModal } from './order-modal'
+import { CropLocationMap } from '@/components/location/crop-location-map'
+import { InquiryModal } from '@/components/marketplace/inquiry-modal'
 
 interface ProductPageProps {
   params: Promise<{ id: string }>
@@ -120,15 +122,19 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </div>
             </div>
 
-            {/* Location & Map info */}
-            <div className="pt-4 border-t border-slate-100 space-y-2">
+            {/* Location & Map info with Leaflet / OpenStreetMap */}
+            <div className="pt-4 border-t border-slate-100 space-y-3">
               <h3 className="font-bold text-sm text-slate-900 flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-emerald-600" />
-                <span>Geographic Region & Dispatch Point</span>
+                <span>Harvest Regional Origin (ফসল সংগ্রহের এলাকা)</span>
               </h3>
-              <p className="text-xs text-slate-500">
-                District: <strong>{product.district}</strong> | Division: <strong>{product.division}</strong>. To respect rural farmer privacy, the exact homestead coordinates are disclosed upon order acceptance.
-              </p>
+              <CropLocationMap
+                district={product.district}
+                division={product.division}
+                upazila={product.upazila}
+                title={product.name}
+                height="220px"
+              />
             </div>
           </div>
         </div>
@@ -210,12 +216,21 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
               </div>
             </div>
 
-            {product.farmer?.phone && (
-              <div className="pt-2 border-t border-slate-100 flex items-center gap-2 text-xs text-slate-600">
-                <Phone className="h-3.5 w-3.5 text-emerald-600" />
-                <span>Contact: {product.farmer.phone}</span>
-              </div>
-            )}
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <Link
+                href={`/farmers/${product.farmer_id || product.farmer?.id || 'farmer-1'}`}
+                className="text-xs font-bold text-emerald-700 hover:underline"
+              >
+                View Full Farmer Profile (প্রোফাইল দেখুন) →
+              </Link>
+
+              <InquiryModal
+                productId={product.id}
+                productTitle={product.name}
+                farmerId={product.farmer_id || product.farmer?.id || 'farmer-1'}
+                farmerName={product.farmer?.full_name || 'Farmer'}
+              />
+            </div>
           </div>
         </div>
       </div>

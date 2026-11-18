@@ -91,7 +91,12 @@ export function ProductCard({ product }: ProductCardProps) {
             </div>
             <div className="text-xs truncate">
               <span className="text-slate-500">Farmer: </span>
-              <span className="font-semibold text-slate-800">{product.farmer_profile?.farm_name || product.farmer?.full_name || 'Verified Producer'}</span>
+              <Link
+                href={`/farmers/${product.farmer_id || product.farmer?.id || 'farmer-1'}`}
+                className="font-semibold text-slate-800 hover:text-emerald-700 hover:underline"
+              >
+                {product.farmer_profile?.farm_name || product.farmer?.full_name || 'Verified Producer'}
+              </Link>
             </div>
           </div>
         </div>
