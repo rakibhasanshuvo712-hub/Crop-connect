@@ -1,7 +1,7 @@
 /**
  * CropConnect Master QA Automated Test Runner
  */
-process.env.NODE_ENV = 'test'
+;(process.env as any).NODE_ENV = 'test'
 
 import { runAiTests } from './unit-ai.test'
 import { runProductTests } from './unit-products.test'
