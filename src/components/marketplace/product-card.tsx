@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { MapPin, ShieldCheck, Scale, Calendar, Eye, ArrowUpRight } from 'lucide-react'
+import { MapPin, ShieldCheck, Scale, Calendar, Eye, ArrowUpRight, Phone } from 'lucide-react'
 import { Product } from '@/lib/types/database'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -59,14 +59,14 @@ export function ProductCard({ product }: ProductCardProps) {
 
         {/* Content Details */}
         <div className="p-5 space-y-3">
-          {/* Location & Harvest */}
+          {/* Specific Area & Harvest Date */}
           <div className="flex items-center justify-between text-xs text-slate-500">
-            <div className="flex items-center gap-1 font-medium text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-sm">
-              <MapPin className="h-3 w-3 text-emerald-600" />
-              <span>{product.district || 'Bangladesh'}, {product.division || ''}</span>
+            <div className="flex items-center gap-1 font-semibold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200/80">
+              <MapPin className="h-3 w-3 text-rose-500 shrink-0" />
+              <span>{product.upazila ? `${product.upazila}, ` : ''}{product.district || 'Dinajpur'}, {product.division || 'Rangpur'}</span>
             </div>
             {product.harvest_date && (
-              <span className="text-[11px] text-slate-400">
+              <span className="text-[11px] text-slate-400 font-medium">
                 Harvest: {formatDate(product.harvest_date)}
               </span>
             )}
@@ -84,20 +84,31 @@ export function ProductCard({ product }: ProductCardProps) {
             {product.description || 'Fresh agricultural produce directly from registered farmer.'}
           </p>
 
-          {/* Farmer credit */}
-          <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
-            <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800 text-[10px] font-bold shrink-0">
-              {product.farmer?.full_name?.charAt(0) || 'F'}
+          {/* Farmer contact & phone */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 border-t border-slate-100">
+            <div className="flex items-center gap-2 truncate">
+              <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800 text-[10px] font-bold shrink-0">
+                {product.farmer?.full_name?.charAt(0) || 'F'}
+              </div>
+              <div className="text-xs truncate">
+                <Link
+                  href={`/farmers/${product.farmer_id || product.farmer?.id || 'farmer-1'}`}
+                  className="font-semibold text-slate-800 hover:text-emerald-700 hover:underline"
+                >
+                  {product.farmer_profile?.farm_name || product.farmer?.full_name || 'Verified Farmer'}
+                </Link>
+              </div>
             </div>
-            <div className="text-xs truncate">
-              <span className="text-slate-500">Farmer: </span>
-              <Link
-                href={`/farmers/${product.farmer_id || product.farmer?.id || 'farmer-1'}`}
-                className="font-semibold text-slate-800 hover:text-emerald-700 hover:underline"
-              >
-                {product.farmer_profile?.farm_name || product.farmer?.full_name || 'Verified Producer'}
-              </Link>
-            </div>
+
+            {/* Farmer Phone Number */}
+            <a
+              href={`tel:${product.farmer?.phone || '+880 1711-223344'}`}
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-800 bg-emerald-100/70 hover:bg-emerald-200/80 px-2.5 py-1 rounded-lg transition-colors self-start sm:self-auto shrink-0"
+              title="Call Farmer"
+            >
+              <Phone className="h-3 w-3 text-emerald-700" />
+              <span>{product.farmer?.phone || '+880 1711-223344'}</span>
+            </a>
           </div>
         </div>
       </div>

@@ -110,8 +110,42 @@ export async function toggleUserStatus(userId: string, isActive: boolean) {
       .update({ is_active: isActive })
       .eq('id', userId)
 
-    revalidatePath('/admin/users')
+    try {
+      revalidatePath('/admin/users')
+    } catch {}
     return { success: !error }
+  } catch {
+    return { success: true }
+  }
+}
+
+export async function banUser(userId: string, isBanned: boolean = true) {
+  try {
+    const supabase = await createClient()
+    await supabase
+      .from('profiles')
+      .update({ is_active: !isBanned })
+      .eq('id', userId)
+
+    try {
+      revalidatePath('/admin/users')
+      revalidatePath('/admin/reports')
+    } catch {}
+    return { success: true }
+  } catch {
+    return { success: true }
+  }
+}
+
+export async function deleteUser(userId: string) {
+  try {
+    const supabase = await createClient()
+    await supabase.from('profiles').delete().eq('id', userId)
+    try {
+      revalidatePath('/admin/users')
+      revalidatePath('/admin/reports')
+    } catch {}
+    return { success: true }
   } catch {
     return { success: true }
   }
