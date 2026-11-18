@@ -1,9 +1,31 @@
 import { Suspense } from 'react'
+import type { Metadata } from 'next'
 import { getProducts } from '@/lib/actions/products'
 import { ProductCard } from '@/components/marketplace/product-card'
 import { MarketplaceFilters } from '@/components/marketplace/marketplace-filters'
 import { SmartMatchModal } from '@/components/ai/smart-match-modal'
 import { ShoppingBag, PackageOpen, Sparkles } from 'lucide-react'
+
+export const metadata: Metadata = {
+  title: 'জাতীয় কৃষি বাজার — তাজা ফসল ও সরাসরি কৃষকের দাম | Marketplace',
+  description: 'Explore verified harvests across all 64 districts of Bangladesh. Direct wholesale trade for rice, potato, onion, vegetables, and fruits at true farm-gate rates.',
+  keywords: [
+    'কৃষি বাজার',
+    'fashol bazar',
+    'Bangladesh wholesale vegetables',
+    'dhaka karwan bazar rates',
+    'direct farmer crops',
+    'পাইকারি সবজি ও ফসল'
+  ],
+  alternates: {
+    canonical: '/marketplace',
+  },
+  openGraph: {
+    title: 'জাতীয় কৃষি বাজার (National Agricultural Marketplace) | CropConnect',
+    description: 'Explore verified harvests across all districts of Bangladesh. Direct trade without middlemen.',
+    url: 'https://cropconnect-delta.vercel.app/marketplace',
+  },
+}
 
 interface MarketplacePageProps {
   searchParams: Promise<{

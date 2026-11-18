@@ -1,8 +1,17 @@
 import { Phone, Mail, MapPin, Clock, MessageSquare } from 'lucide-react'
+import type { Metadata } from 'next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { APP_CONFIG } from '@/lib/constants'
+
+export const metadata: Metadata = {
+  title: 'যোগাযোগ ও সাপোর্ট — আমাদের সহায়তা কেন্দ্র | Contact Us',
+  description: 'Get in touch with CropConnect Bangladesh for farmer registration assistance, dispute mediation, bulk enterprise orders, or general inquiries.',
+  alternates: {
+    canonical: '/contact',
+  },
+}
 
 export default function ContactPage() {
   return (

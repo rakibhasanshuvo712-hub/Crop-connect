@@ -1,8 +1,17 @@
 import { Sprout, Target, ShieldCheck, Users, Heart, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { APP_CONFIG } from '@/lib/constants'
+
+export const metadata: Metadata = {
+  title: 'আমাদের সম্পর্কে — আমাদের লক্ষ্য ও কৃষি বিপ্লব | About Us',
+  description: 'Learn about CropConnect\'s mission to eliminate middlemen and empower Bangladeshi farmers through AI and direct trade connectivity.',
+  alternates: {
+    canonical: '/about',
+  },
+}
 
 export default function AboutPage() {
   return (

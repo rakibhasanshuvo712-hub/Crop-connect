@@ -25,8 +25,49 @@ export default async function HomePage() {
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   )
 
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'CropConnect (কৃষক সংযোগ)',
+    alternateName: 'CropConnect Bangladesh',
+    url: 'https://cropconnect-delta.vercel.app',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: 'https://cropconnect-delta.vercel.app/marketplace?search={search_term_string}',
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
+  const organizationJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'CropConnect Bangladesh',
+    url: 'https://cropconnect-delta.vercel.app',
+    logo: 'https://cropconnect-delta.vercel.app/opengraph-image',
+    description: 'AI-Powered Direct Agricultural Marketplace connecting farmers in Bangladesh directly with wholesale and retail buyers.',
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+8801711002233',
+      contactType: 'customer service',
+      areaServed: 'BD',
+      availableLanguage: ['Bengali', 'English'],
+    },
+  }
+
   return (
     <div className="space-y-10 sm:space-y-12 pb-20">
+      {/* Schema.org WebSite & Organization SEO Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+      />
       {/* 1. SIMPLE HERO SECTION */}
       <section className="relative overflow-hidden pt-8 sm:pt-12 pb-8 sm:pb-12 bg-gradient-to-b from-emerald-50/70 via-white to-[#fcfdfc] border-b border-emerald-100/60">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

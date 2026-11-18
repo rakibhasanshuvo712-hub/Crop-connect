@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import {
   MapPin,
   Calendar,
@@ -32,6 +33,60 @@ interface ProductPageProps {
   params: Promise<{ id: string }>
 }
 
+export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+  const { id } = await params
+  const product = await getProductById(id)
+
+  if (!product) {
+    return {
+      title: 'পণ্য পাওয়া যায়নি | CropConnect',
+      description: 'The requested agricultural harvest could not be found.',
+    }
+  }
+
+  const primaryImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80'
+  const title = `${product.name} (৳${product.price_per_unit}/${product.unit}) — ${product.district || 'বাংলাদেশ'} | CropConnect`
+  const description = `সরাসরি কৃষক থেকে কিনুন: ${product.name}। এলাকা: ${product.district || ''}, ${product.division || ''}। বর্তমান মজুদ: ${product.quantity} ${product.unit}। মূল্য: ৳${product.price_per_unit}/${product.unit}। পাইকারি ও খুচরা কেনাবেচা।`
+
+  return {
+    title,
+    description,
+    keywords: [
+      product.name,
+      product.category,
+      product.district || 'Bangladesh',
+      product.division || '',
+      'কৃষি পণ্য',
+      'পাইকারি দাম',
+      'কৃষক বাজার',
+      'fashol rate',
+    ],
+    alternates: {
+      canonical: `/products/${product.id}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://cropconnect-delta.vercel.app/products/${product.id}`,
+      type: 'article',
+      images: [
+        {
+          url: primaryImage,
+          width: 800,
+          height: 600,
+          alt: `${product.name} - ${product.district || 'বাংলাদেশ'}`,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [primaryImage],
+    },
+  }
+}
+
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { id } = await params
   const product = await getProductById(id)
@@ -44,8 +99,72 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   const categoryInfo = PRODUCT_CATEGORIES.find(c => c.id === product.category)
   const primaryImage = product.images?.[0]?.url || 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80'
 
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: primaryImage,
+    description: product.description || `${product.name} fresh harvest from ${product.district}, Bangladesh.`,
+    sku: product.id,
+    category: categoryInfo?.name || product.category,
+    offers: {
+      '@type': 'Offer',
+      url: `https://cropconnect-delta.vercel.app/products/${product.id}`,
+      priceCurrency: 'BDT',
+      price: product.price_per_unit,
+      priceValidUntil: '2027-12-31',
+      itemCondition: 'https://schema.org/NewCondition',
+      availability: product.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      seller: {
+        '@type': 'Person',
+        name: product.farmer?.full_name || product.farmer_profile?.farm_name || 'Registered Farmer',
+        telephone: product.farmer?.phone || undefined,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: product.district || 'Dhaka',
+          addressRegion: product.division || 'Dhaka',
+          addressCountry: 'BD',
+        },
+      },
+    },
+  }
+
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'হোম (Home)',
+        item: 'https://cropconnect-delta.vercel.app',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'কৃষি বাজার (Marketplace)',
+        item: 'https://cropconnect-delta.vercel.app/marketplace',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: product.name,
+        item: `https://cropconnect-delta.vercel.app/products/${product.id}`,
+      },
+    ],
+  }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      {/* Schema.org SEO Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       {/* Back button */}
       <div>
         <Link
