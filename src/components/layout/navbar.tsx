@@ -2,13 +2,14 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Sprout, ShoppingBag, Bot, LineChart, Menu, X, User, LogIn, ShieldCheck, ChevronDown } from 'lucide-react'
+import { Sprout, ShoppingBag, Bot, LineChart, Menu, X, User, LogIn, LogOut, ShieldCheck, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { createClient } from '@/lib/supabase/client'
 import { APP_CONFIG } from '@/lib/constants'
 import { NotificationBell } from './notification-bell'
 import { useLanguage } from '@/context/language-context'
+import { signOutUser } from '@/lib/actions/auth'
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -18,6 +19,18 @@ export function Navbar() {
 
   useEffect(() => {
     try {
+      // Check resilient cookie first
+      const cookieMatch = typeof document !== 'undefined' && document.cookie.match(/cropconnect_user=([^;]+)/)
+      if (cookieMatch) {
+        try {
+          const cookieData = JSON.parse(decodeURIComponent(cookieMatch[1]))
+          if (cookieData?.email) {
+            setUser({ email: cookieData.email, id: cookieData.id })
+            setRole(cookieData.role || 'farmer')
+          }
+        } catch {}
+      }
+
       const supabase = createClient()
       supabase.auth.getUser().then(({ data: { user } }) => {
         if (user) {
@@ -121,6 +134,15 @@ export function Navbar() {
                     <span className="capitalize">{role || 'Dashboard'}</span>
                   </Link>
                 </Button>
+
+                <button
+                  onClick={() => signOutUser()}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-rose-200 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold transition-colors cursor-pointer"
+                  title="Log Out (লগআউট)"
+                >
+                  <LogOut className="h-3.5 w-3.5 text-rose-600" />
+                  <span className="hidden sm:inline">Log Out</span>
+                </button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
@@ -196,13 +218,32 @@ export function Navbar() {
               Contact Support
             </Link>
 
-            <div className="pt-2 border-t border-slate-100 flex gap-2">
-              <Button variant="outline" size="sm" className="w-full" asChild>
-                <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
-              </Button>
-              <Button variant="default" size="sm" className="w-full" asChild>
-                <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>Register</Link>
-              </Button>
+            <div className="pt-2 border-t border-slate-100">
+              {user ? (
+                <div className="space-y-2">
+                  <Button variant="default" size="sm" className="w-full bg-emerald-700 hover:bg-emerald-800" asChild>
+                    <Link href={dashboardHref} onClick={() => setMobileMenuOpen(false)}>
+                      Go to {role ? `${role.toUpperCase()} Dashboard` : 'Dashboard'}
+                    </Link>
+                  </Button>
+                  <button
+                    onClick={() => signOutUser()}
+                    className="w-full flex items-center justify-center gap-2 py-2 rounded-xl border border-rose-300 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-bold transition-colors cursor-pointer"
+                  >
+                    <LogOut className="h-4 w-4 text-rose-600" />
+                    <span>Log Out (লগআউট)</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" className="w-full" asChild>
+                    <Link href="/auth/login" onClick={() => setMobileMenuOpen(false)}>Sign In</Link>
+                  </Button>
+                  <Button variant="default" size="sm" className="w-full" asChild>
+                    <Link href="/auth/register" onClick={() => setMobileMenuOpen(false)}>Register</Link>
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         )}

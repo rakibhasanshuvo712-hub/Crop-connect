@@ -66,10 +66,10 @@ export function AdminSidebar() {
       <div className="pt-4 border-t border-slate-900">
         <button
           onClick={() => signOutUser()}
-          className="w-full flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-950/20 transition-colors cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold text-rose-300 bg-rose-950/40 border border-rose-800/60 hover:bg-rose-900/60 hover:text-white transition-colors cursor-pointer shadow-xs"
         >
-          <LogOut className="h-4 w-4" />
-          <span>Sign Out</span>
+          <LogOut className="h-4 w-4 text-rose-400" />
+          <span>Log Out (লগআউট)</span>
         </button>
       </div>
     </aside>
